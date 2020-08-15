@@ -1,6 +1,6 @@
 # Research Papers Interactive Database
 
- *by Dabeer Abdul-Azeez | Most recently updated: Aug. 15th, 2020*
+ *by Dabeer Abdul-Azeez*
 
 
 
