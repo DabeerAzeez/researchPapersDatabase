@@ -13,6 +13,12 @@ This project contains code for interactive databases to display the research pap
 
 
 
+![](README.assets/ResearchPapers.gif)
+
+<small>Note: This GIF was recorded during the development process of the website, so some items have changed. To see the most up-to-date, version, visit the links above!</small>
+
+
+
 ## Technologies Used
 
 - JavaScript
