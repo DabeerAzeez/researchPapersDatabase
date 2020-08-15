@@ -32,7 +32,9 @@ interface ResearchPaperItem {
 }
 */
 
+
 /**** ON PAGE LOAD ****/
+
 $w.onReady(async function () {
 	let databaseChanged = false;
 
@@ -82,6 +84,7 @@ export function refreshDataset() {
 			$w(DATASET).refresh().then(() => updateElements()); 
 		}
 }
+
 
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
 
@@ -244,6 +247,7 @@ export function publicationImage_mouseOut(event) {
 	$item("#imageOverlay").hide("fade", { "duration": 200 });
 }
 
+
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
 
 /**
@@ -272,6 +276,7 @@ export async function loadAllButton_click(event) {
 	updateElements();
 	$w("#loadingGIFAll").hide();
 }
+
 
 /**** SEARCH BOX AND SEARCH RESET EVENT HANDLERS ****/
 
