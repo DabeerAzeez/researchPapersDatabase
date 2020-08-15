@@ -64,7 +64,7 @@ $w.onReady(async function () {
 		$w(DATASET).onReady(() => refreshDataset()); 
 	}
 
-	// Show mobile alert message to view the page on a larger screen
+	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
 		$w("#mobileAlertMessage").expand();
 	} else {
