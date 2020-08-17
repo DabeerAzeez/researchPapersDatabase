@@ -41,7 +41,7 @@ $w.onReady(async function () {
 		.limit(1000)
 		.descending("publicationDate") // sort query by date
 		.find()
-		.then((results) => {
+		.then(async (results) => {
 			let items = results.items;
 			const totalDatabaseItems = items.length;
 
@@ -51,7 +51,7 @@ $w.onReady(async function () {
 				let properIndex = totalDatabaseItems - i;
 				if (item.publicationNumber !== properIndex) {
 					item.publicationNumber = properIndex;
-					wixData.update(DATABASE, item);
+					await wixData.update(DATABASE, item);
 
 					if (databaseChanged === false) {
 						databaseChanged = true;
