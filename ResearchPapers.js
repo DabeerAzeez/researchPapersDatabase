@@ -76,17 +76,6 @@ $w.onReady(async function () {
 
 });
 
-/**
- * Refreshes dataset and updates page elements afterwards.
- */
-export function refreshDataset() {
-	$w(DATASET).onReady(() => {
-		$w(DATASET).refresh()
-			.then(() => {
-				updateElements();
-			});
-	})
-}
 
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
 
