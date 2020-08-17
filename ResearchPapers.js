@@ -314,7 +314,7 @@ function filterDataset(searchQuery) {
 	debounceTimer = setTimeout(() => {
 		// filter dataset for items with title / content fields that contain the search query
 		$w(DATASET).setFilter(wixData.filter().contains("title", searchQuery)
-				.or(wixData.filter().contains("content", $w("#searchBar").value)))
+				.or(wixData.filter().contains("content", searchQuery)))
 			.then(() => updateElements())
 	}, 200);
 
