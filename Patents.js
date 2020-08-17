@@ -51,6 +51,11 @@ $w.onReady(async function () {
 			}
 		})
 
+	// refresh dataset if it was changed above
+	if (databaseChanged) {
+		$w(DATASET).onReady(() => refreshDataset()); 
+	}
+
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
 		$w("#mobileAlertMessage").expand();
@@ -59,6 +64,16 @@ $w.onReady(async function () {
 	}
 	
 });
+
+/**
+ * Reloads dataset and updates page elements thrice. Refreshing and updating the elements fewer than three times didn't 
+ * seem to actually change the repeater's contents, so this is the current solution.
+ */
+export function refreshDataset() {	
+	for (var i = 0; i < 3; i++) {
+			$w(DATASET).refresh().then(() => updateElements()); 
+		}
+}
 
 
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
