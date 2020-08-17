@@ -39,7 +39,7 @@ $w.onReady(async function () {
 
 	await wixData.query(DATABASE)
 		.limit(1000)
-		.descending("publicationDate") // sort query by date
+		.descending("publicationDate") // sort query by date (newest items first)
 		.find()
 		.then(async (results) => {
 			let items = results.items;
