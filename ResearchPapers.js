@@ -32,7 +32,6 @@ interface ResearchPaperItem {
 }
 */
 
-
 /**** ON PAGE LOAD ****/
 
 $w.onReady(async function () {
@@ -45,7 +44,7 @@ $w.onReady(async function () {
 		.then((results) => {
 			let items = results.items;
 			const totalDatabaseItems = items.length;
-			
+
 			// Update each publication's publication number automatically (as necessary) based on total number of papers
 			for (var i = 0; i < items.length; i++) {
 				let item = items[i];
@@ -72,7 +71,7 @@ $w.onReady(async function () {
 	} else {
 		$w("#mobileAlertMessage").collapse();
 	}
-	
+
 });
 
 /**
@@ -84,7 +83,6 @@ export function refreshDataset() {
 			$w(DATASET).refresh().then(() => updateElements()); 
 		}
 }
-
 
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
 
@@ -247,7 +245,6 @@ export function publicationImage_mouseOut(event) {
 	$item("#imageOverlay").hide("fade", { "duration": 200 });
 }
 
-
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
 
 /**
@@ -276,7 +273,6 @@ export async function loadAllButton_click(event) {
 	updateElements();
 	$w("#loadingGIFAll").hide();
 }
-
 
 /**** SEARCH BOX AND SEARCH RESET EVENT HANDLERS ****/
 
