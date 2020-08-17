@@ -65,6 +65,8 @@ $w.onReady(async function () {
 		refreshDataset()
 	}
 
+	updateElements();
+
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
 		$w("#mobileAlertMessage").expand();
