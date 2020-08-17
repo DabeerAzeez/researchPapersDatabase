@@ -62,7 +62,7 @@ $w.onReady(async function () {
 
 	// refresh dataset if it was changed above
 	if (databaseChanged) {
-		$w(DATASET).onReady(() => refreshDataset()); 
+		refreshDataset()
 	}
 
 	// Double check that mobile alert message displays only on mobile
@@ -75,13 +75,15 @@ $w.onReady(async function () {
 });
 
 /**
- * Reloads dataset and updates page elements thrice. Refreshing and updating the elements fewer than three times didn't 
- * seem to actually change the repeater's contents, so this is the current solution.
+ * Refreshes dataset and updates page elements afterwards.
  */
-export function refreshDataset() {	
-	for (var i = 0; i < 3; i++) {
-			$w(DATASET).refresh().then(() => updateElements()); 
-		}
+export function refreshDataset() {
+	$w(DATASET).onReady(() => {
+		$w(DATASET).refresh()
+			.then(() => {
+				updateElements();
+			});
+	})
 }
 
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
