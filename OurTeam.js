@@ -46,6 +46,10 @@ export function collapseAnchorMenuButton_click(event) {
  */
 function setUpImgRepeater(memberType) {
 	$w("#Repeater" + memberType).forEachItem(($item, itemData, index) => {
+		if (itemData.memberType.length > 1) {
+			throw new Error("Following member has more than one member type: " + itemData.name)
+		}
+
 		if (itemData.image === undefined) {
 			$item("#memberImage" + memberType).src = BACKUPIMAGE;
 		}
@@ -63,6 +67,10 @@ function setUpAlumniRepeater() {
 		let memberType;
 
 		memberType = itemData.memberType[0];
+
+		if (itemData.memberType.length > 1) {
+			throw new Error("Following member has more than one member type: " + itemData.name)
+		}
 		
 		if (memberType === "Ph.D. Student") {
 			memberType = "Ph.D"
