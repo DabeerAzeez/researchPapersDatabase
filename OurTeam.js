@@ -71,13 +71,13 @@ function setUpAlumniRepeater() {
 		if (itemData.startTime) {
 			startYear = itemData.startTime.getFullYear().toString();
 		} else {
-			throw new Error("Error: Following alumnus has no start date: ", itemData.name)
+			throw new Error("Following alumnus has no start date: " + itemData.name) // alumni must have a start date
 		}
 		
 		if (itemData.endTime) {
 			endYear = itemData.endTime.getFullYear().toString();
 		} else {
-			throw new Error("Error: Following alumnus has no end date: ", itemData.name)
+			throw new Error("Following alumnus has no end date: " + itemData.name) // alumni must have an end date
 		}
 
 		let optionalNewLine = wixWindow.formFactor === "Mobile" ? "\n" : ""
