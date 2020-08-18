@@ -9,6 +9,11 @@ $w.onReady(function () {
 			$item("#equipmentImage").expand();
 		}
 
+		if (itemData.productLink) {
+			$item("#linkButton").show();
+		} else {
+			$item("#linkButton").hide();
+		}
 	}))
 });
 
