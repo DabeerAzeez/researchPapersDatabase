@@ -55,8 +55,35 @@ function setUpImgRepeater(memberType) {
  */
 function setUpAlumniRepeater() {
 	$w("#Repeater" + ALUMNI).forEachItem(($item, itemData, index) => {
-		let alumnusDescription = itemData.memberType[0] + " (" + itemData.startTime.getFullYear().toString() + "-" + itemData.endTime.getFullYear().toString() + ")"
+		let alumnusDescription;
+		let startYear;
+		let endYear;
+		let memberType;
+
+		memberType = itemData.memberType[0];
+		
+		if (memberType === "Ph.D. Student") {
+			memberType = "Ph.D"
+		}
+
+		if (itemData.startTime) {
+			startYear = itemData.startTime.getFullYear().toString();
+		} else {
+			throw new Error("Error: Following alumnus has no start date: ", itemData.name)
+		}
+		
+		if (itemData.endTime) {
+			endYear = itemData.endTime.getFullYear().toString();
+		} else {
+			throw new Error("Error: Following alumnus has no end date: ", itemData.name)
+		}
+
+		if (startYear === endYear) {
+			alumnusDescription = memberType + " (" + startYear + ")";
+		} else {
+			alumnusDescription = memberType + " (" + startYear + " - " + endYear + ")";
+		}
+
 		$item("#alumnusDescription").text = alumnusDescription;
-		console.log(alumnusDescription, "alumnus description changed");
 	})
 }
