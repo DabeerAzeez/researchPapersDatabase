@@ -1,18 +1,24 @@
-// const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png"
-const BACKUPIMAGE = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Amerikanische_Pekingenten_2013_01%2C_cropped.jpg"
+// TODO: Check if maximum load capacities for repeaters are enough
 
-const REPEATER_FELLOWS = "#PostDoctoralFellows"
+// const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png" // Actual backup image
+const BACKUPIMAGE = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Amerikanische_Pekingenten_2013_01%2C_cropped.jpg" // for fu
 
-const DATASET_POSTDOC = "#PostDoctoralDS"
+// Indexes to differentiate similar repeaters, item IDs, and other relevant elements of the page
+const POST_DOCTORAL_FELLOWS = "PDF";
+const PHD_STUDENTS = "PHD";
+const MASC_STUDENTS = "MAS";
+const UNDERGRADUATES = "UND";
+const ALUMNI = "ALM";
+
+const MEMBER_TYPES = [POST_DOCTORAL_FELLOWS, PHD_STUDENTS, MASC_STUDENTS, UNDERGRADUATES] // TODO: Add missing member types
 
 $w.onReady(function () {
-
-	$w(DATASET_POSTDOC).onReady(() => setUpRepeaters());
-
+	MEMBER_TYPES.forEach((memberType) => {
+		$w("#Dataset" + memberType).onReady(() => setUpRepeater(memberType)); // set up repeater for each member type
+	});
 });
 
 export function collapseAnchorMenuButton_click(event) {
-	// Add your code for this event here: 
 	if ($w("#anchorMenu").hidden) {
 		$w("#anchorMenu").show("float", { direction: "right" });
 	} else {
@@ -21,12 +27,10 @@ export function collapseAnchorMenuButton_click(event) {
 
 }
 
-function setUpRepeaters() {
-	$w(REPEATER_FELLOWS).forEachItem(($item, itemData, index) => {
-
+function setUpRepeater(memberType) {
+	$w("#Repeater" + memberType).forEachItem(($item, itemData, index) => {
 		if (itemData.image === undefined) {
-			$item("#memberImage").src = BACKUPIMAGE;
-			console.log("image changed");
+			$item("#memberImage" + memberType).src = BACKUPIMAGE;
 		}
 	})
 }
