@@ -7,6 +7,8 @@
 - If no end year, then say 'Current'
 */
 
+import wixWindow from 'wix-window';
+
 // const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png" // Actual backup image
 const BACKUPIMAGE = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Amerikanische_Pekingenten_2013_01%2C_cropped.jpg" // for fu
 
@@ -78,10 +80,12 @@ function setUpAlumniRepeater() {
 			throw new Error("Error: Following alumnus has no end date: ", itemData.name)
 		}
 
+		let optionalNewLine = wixWindow.formFactor === "Mobile" ? "\n" : ""
+
 		if (startYear === endYear) {
-			alumnusDescription = memberType + " (" + startYear + ")";
+			alumnusDescription = memberType + optionalNewLine + " (" + startYear + ")";
 		} else {
-			alumnusDescription = memberType + " (" + startYear + " - " + endYear + ")";
+			alumnusDescription = memberType + optionalNewLine + " (" + startYear + " - " + endYear + ")";
 		}
 
 		$item("#alumnusDescription").text = alumnusDescription;
