@@ -54,4 +54,9 @@ function setUpImgRepeater(memberType) {
  * Set up repeater for alumni, no headshot for anyone, description is placed below their name
  */
 function setUpAlumniRepeater() {
+	$w("#Repeater" + ALUMNI).forEachItem(($item, itemData, index) => {
+		let alumnusDescription = itemData.memberType[0] + " (" + itemData.startTime.getFullYear().toString() + "-" + itemData.endTime.getFullYear().toString() + ")"
+		$item("#alumnusDescription").text = alumnusDescription;
+		console.log(alumnusDescription, "alumnus description changed");
+	})
 }
