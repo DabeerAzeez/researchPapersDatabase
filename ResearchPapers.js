@@ -1,6 +1,6 @@
 /**
  * Hoare Lab Research Papers Interactive Database
- * by Dabeer Abdul-Azeez | Most recently updated: Aug. 15th, 2020
+ * by Dabeer Abdul-Azeez | Most recently updated: Aug. 17th, 2020
  * 
  * @implements Wix Corvid API (see documentation here: https://www.wix.com/corvid/reference/api-overview/introduction)
  * Built for https://hoaretr.wixsite.com/hoarelab/researchpapers
@@ -13,6 +13,7 @@
 
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
+import wixUsers from 'wix-users';
 
 const DATABASE = "ResearchPapers"
 const DATASET = "#RPDataSet"
@@ -36,6 +37,7 @@ interface ResearchPaperItem {
 
 $w.onReady(async function () {
 	let databaseChanged = false;
+	const currentUser = wixUsers.currentUser;
 
 	await wixData.query(DATABASE)
 		.limit(1000)
@@ -46,15 +48,17 @@ $w.onReady(async function () {
 			const totalDatabaseItems = items.length;
 
 			// Update each publication's publication number automatically (as necessary) based on total number of papers
-			for (var i = 0; i < items.length; i++) {
-				let item = items[i];
-				let properIndex = totalDatabaseItems - i;
-				if (item.publicationNumber !== properIndex) {
-					item.publicationNumber = properIndex;
-					await wixData.update(DATABASE, item);
+			if (currentUser.loggedIn && currentUser.role === 'Admin') {
+				for (var i = 0; i < items.length; i++) {
+					let item = items[i];
+					let properIndex = totalDatabaseItems - i;
+					if (item.publicationNumber !== properIndex) {
+						item.publicationNumber = properIndex;
+						await wixData.update(DATABASE, item);
 
-					if (databaseChanged === false) {
-						databaseChanged = true;
+						if (databaseChanged === false) {
+							databaseChanged = true;
+						}
 					}
 				}
 			}
