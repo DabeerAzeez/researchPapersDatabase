@@ -1,11 +1,4 @@
 // TODO: Check if maximum load capacities for repeaters are enough
-// TODO: Fix anchors and anchor menu (use strips?)
-// TODO: Change start/end TIME to DATE
-/* 
-// TODO: Code alumni
-- If end year = start year, then just show the year
-- If no end year, then say 'Current'
-*/
 
 import wixWindow from 'wix-window';
 
@@ -19,7 +12,7 @@ const MASC_STUDENTS = "MAS";
 const UNDERGRADUATES = "UND";
 const ALUMNI = "ALM";
 
-const MEMBER_TYPES = [POST_DOCTORAL_FELLOWS, PHD_STUDENTS, MASC_STUDENTS, UNDERGRADUATES] // TODO: Add missing member types
+const MEMBER_TYPES = [POST_DOCTORAL_FELLOWS, PHD_STUDENTS, MASC_STUDENTS, UNDERGRADUATES]
 
 $w.onReady(function () {
 
