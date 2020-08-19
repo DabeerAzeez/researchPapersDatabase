@@ -2,6 +2,8 @@
  * See documentation under 'Research Papers' page for more information
  */
 
+ // TODO: Compare with ResearchPapers.js
+
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
 
