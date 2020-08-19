@@ -64,29 +64,34 @@ function setUpAlumniRepeater() {
 		if (itemData.memberType.length > 1) {
 			throw new Error("Following member has more than one member type: " + itemData.name)
 		}
-		
+
 		if (memberType === "Ph.D. Student") {
 			memberType = "Ph.D"
 		}
 
-		if (itemData.startTime) {
-			startYear = itemData.startTime.getFullYear().toString();
-		} else {
-			throw new Error("Following alumnus has no start date: " + itemData.name) // alumni must have a start date
-		}
-		
-		if (itemData.endTime) {
-			endYear = itemData.endTime.getFullYear().toString();
-		} else {
-			throw new Error("Following alumnus has no end date: " + itemData.name) // alumni must have an end date
-		}
-
 		let optionalNewLine = wixWindow.formFactor === "Mobile" ? "\n" : ""
 
-		if (startYear === endYear) {
-			alumnusDescription = memberType + optionalNewLine + " (" + startYear + ")";
+		// throw errors about missing start/end dates if no override is present
+		if (!itemData.adtOverride) {
+			if (itemData.startTime) {
+				startYear = itemData.startTime.getFullYear().toString();
+			} else {
+				throw new Error("Following alumnus has no start date: " + itemData.name)
+			}
+
+			if (itemData.endTime) {
+				endYear = itemData.endTime.getFullYear().toString();
+			} else {
+				throw new Error("Following alumnus has no end date: " + itemData.name)
+			}
+
+			if (startYear === endYear) {
+				alumnusDescription = memberType + optionalNewLine + " (" + startYear + ")";
+			} else {
+				alumnusDescription = memberType + optionalNewLine + " (" + startYear + " - " + endYear + ")";
+			}
 		} else {
-			alumnusDescription = memberType + optionalNewLine + " (" + startYear + " - " + endYear + ")";
+			alumnusDescription = memberType + optionalNewLine + " (" + itemData.adtOverride + ")";
 		}
 
 		$item("#alumnusDescription").text = alumnusDescription;
