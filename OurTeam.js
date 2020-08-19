@@ -99,11 +99,11 @@ function setUpAlumniRepeater() {
 			// remove start and end dates for an alumnus who has an override
 			if (currentUser.loggedIn && currentUser.role === 'Admin' || 'Owner') {
 				wixData.get(DATABASE, itemData._id)
-					.then(async (item) => {
+					.then((item) => {
 						console.log(item);
 						item.startTime = undefined;
 						item.endTime = undefined;
-						await wixData.update(DATABASE, item);
+						wixData.update(DATABASE, item);
 					})
 			}
 
