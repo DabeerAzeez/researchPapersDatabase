@@ -7,7 +7,7 @@ import wixUsers from 'wix-users';
 
 const DATABASE = "OurTeam"
 const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png"
-const currentUser = wixUsers.currentUser;
+const CURRENTUSER = wixUsers.currentUser;
 
 // Indexes to differentiate similar repeaters, item IDs, and other relevant elements of the page
 const POST_DOCTORAL_FELLOWS = "PDF";
