@@ -1,9 +1,13 @@
 // TODO: Check if maximum load capacities for repeaters are enough
 
+import wixData from 'wix-data';
 import wixWindow from 'wix-window';
+import wixUsers from 'wix-users';
 
 // const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png" // Actual backup image
 const BACKUPIMAGE = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Amerikanische_Pekingenten_2013_01%2C_cropped.jpg" // for fu
+const DATABASE = "OurTeam"
+const currentUser = wixUsers.currentUser;
 
 // Indexes to differentiate similar repeaters, item IDs, and other relevant elements of the page
 const POST_DOCTORAL_FELLOWS = "PDF";
@@ -92,6 +96,18 @@ function setUpAlumniRepeater() {
 			}
 		} else {
 			alumnusDescription = memberType + optionalNewLine + " (" + itemData.adtOverride + ")";
+
+			// remove start and end dates for an alumnus who has an override
+			if (currentUser.loggedIn && currentUser.role === 'Admin' || 'Owner') {
+				wixData.get(DATABASE, itemData._id)
+					.then(async (item) => {
+						console.log(item);
+						item.startTime = undefined;
+						item.endTime = undefined;
+						await wixData.update(DATABASE, item);
+					})
+			}
+
 		}
 
 		$item("#alumnusDescription").text = alumnusDescription;
