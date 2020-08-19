@@ -1,4 +1,5 @@
 // TODO: Check if maximum load capacities for repeaters are enough
+// TODO: Check that end date is after start date
 
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
