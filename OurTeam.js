@@ -98,7 +98,7 @@ function setUpAlumniRepeater() {
 			alumnusDescription = memberType + optionalNewLine + " (" + itemData.adtOverride + ")";
 
 			// remove start and end dates for an alumnus who has an override
-			if (currentUser.loggedIn && currentUser.role === 'Admin' || 'Owner') {
+			if (CURRENTUSER.loggedIn && CURRENTUSER.role === 'Admin' || 'Owner') {
 				wixData.get(DATABASE, itemData._id)
 					.then((item) => {
 						console.log(item);
