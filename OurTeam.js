@@ -94,18 +94,9 @@ function setUpAlumniRepeater() {
 		let optionalNewLine = wixWindow.formFactor === "Mobile" ? "\n" : ""
 
 		// throw errors about missing start/end dates if no override is present
-		if (!itemData.adtOverride) {
-			if (itemData.startTime) {
-				startYear = itemData.startTime.getFullYear().toString();
-			} else {
-				throw new Error("Following alumnus has no start date: " + itemData.name)
-			}
-
-			if (itemData.endTime) {
-				endYear = itemData.endTime.getFullYear().toString();
-			} else {
-				throw new Error("Following alumnus has no end date: " + itemData.name)
-			}
+		let startYear = startDate.getFullYear();
+		let endYear = endDate.getFullYear();
+		let alumnusDescription = "";
 
 			if (startYear === endYear) {
 				alumnusDescription = memberType + optionalNewLine + " (" + startYear + ")";
