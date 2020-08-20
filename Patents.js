@@ -1,8 +1,6 @@
 /**
- * See documentation under 'Research Papers' page for more information
+ * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
  */
-
- // TODO: Compare with ResearchPapers.js
 
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
@@ -25,7 +23,6 @@ interface ResearchPaperItem {
   publicationNumber: Number;
 }
 */
-
 
 /**** ON PAGE LOAD ****/
 
@@ -70,7 +67,7 @@ $w.onReady(async function () {
 	} else {
 		$w("#mobileAlertMessage").collapse();
 	}
-	
+
 });
 
 /**
@@ -86,30 +83,30 @@ function refreshDataset(dataset) {
 	})
 }
 
-
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
 
 /**
- * Update dynamic page elements, including text results, repeater and container below repeater ("end container")
+ * Update dynamic page elements
  */
 function updateElements() {
-	let total = $w(DATASET).getTotalCount(); // Get total number of papers under current filter
+	let total = $w(DATASET).getTotalCount(); // Get total number of papers in dataset (i.e. under current filter)
 
 	updateTextResults(total);
 	updateEndContainer(total);
 	if (total > 0) {
-		updateRepeater(); // update repeater if there's items to put in it
+		updateRepeater(); // Update repeater if there's items to put in it
 	}
 	updateNoItemsFound(total)
 }
 
 /**
- * Update dynamic text at top of the page to show how many results there are and how many are being displayed
- * @param {number} total - total number of papers under current filter
+ * Update dynamic text at top of the page to show how many results are available and how many are being displayed
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateTextResults(total) {
 	let currentlyDisplayed = $w(REPEATER).data.length;
 
+  // Change wording of text results based on the total number of results
 	if (total > 1) {
 		$w('#textResults').text = `Showing ${currentlyDisplayed} of ${total} results`;
 	} else if (total === 1) {
@@ -122,24 +119,23 @@ function updateTextResults(total) {
 }
 
 /**
- * Check to see if all data from available results is being shown and toggle displaying 'loading buttons' appropriately with an
- * alternative container
- * @param {number} total - total number of papers under current filter
+ * Check to see if dataset results are being shown, toggle displaying 'loading buttons' with an alternative container
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateEndContainer(total) {
 	let nonZeroPapers = total > 0;
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
 	if (nonZeroPapers && !allPagesLoaded) {
-		showLoadingButtons(true); // Show loading buttons only if there are more pages of papers to load
+		showLoadingButtons(true); // Show loading buttons only if there are more items to load
 	} else {
 		showLoadingButtons(false);
 	}
 }
 
 /**
- * Toggles between showing loading buttons and alternative container instead
- * @param {boolean} choice - choice whether to show loading buttons or alternative container
+ * Toggles between showing loading buttons and alternative container
+ * @param {boolean} choice - choice whether to show loading buttons
  */
 function showLoadingButtons(choice) {
 	if (choice === true) {
@@ -215,7 +211,7 @@ function updateRepeater() {
 
 /**
  * Display some text to the user if no items exist in the filtered dataset (i.e. if search query leads to 0 results)
- * @param {number} total - total number of papers under current filter
+ * @param {number} total - total number of dataset items under current filter
  */
 async function updateNoItemsFound(total) {
 	if (total > 0) {
@@ -226,17 +222,15 @@ async function updateNoItemsFound(total) {
 		await $w(REPEATER).collapse();
 	} else {
 		throw new Error("Improper usage of noItemsCheck(), cannot parse input: ", total)
-  }
-  
-  $w("#loadingGIFTop").hide();
+	}
+
+	$w("#loadingGIFTop").hide();
 }
-
-
 
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
 
 /**
- * Manually load another page of data for the dataset and update dynamic page elements
+ * Load another page of data for the dataset and update dynamic page elements
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadMoreButton_click(event) {
@@ -247,7 +241,7 @@ export async function loadMoreButton_click(event) {
 }
 
 /**
- * Load pages of data incrmementally until all have been loaded, then update dynamic page elements
+ * Load pages of data and update dynamic page elements incrementally
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadAllButton_click(event) {
@@ -261,7 +255,6 @@ export async function loadAllButton_click(event) {
 	updateElements();
 	$w("#loadingGIFAll").hide();
 }
-
 
 /**** SEARCH BOX AND SEARCH RESET EVENT HANDLERS ****/
 
@@ -282,7 +275,8 @@ export function searchResetButton_click(event) {
 	filterDataset("");
 }
 
-let debounceTimer;
+let debounceTimer; // To limit number of search queries per time interval
+const DEBOUNCE_TIME = 200;
 
 function filterDataset(searchQuery) {
 
@@ -290,7 +284,6 @@ function filterDataset(searchQuery) {
 	$w("#loadingGIFTop").show();
 	$w("#textResults").text = "Processing...";
 
-	// Make sure the user doesn't get ahead of the browser
 	if (debounceTimer) {
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
