@@ -162,6 +162,16 @@ async function updateRepeater() {
 
 	// Loop over repeater items
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
+    // Checking for missing fields
+    try {
+      let requiredFields = {
+        title: itemData.title,
+        citation: itemData.citation,
+        filingDate: itemData.filingDate
+      }
+    } catch (error) {
+      throw new Error("At least one required field is missing for item ID: ", itemData._id)
+    }
 
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
 
