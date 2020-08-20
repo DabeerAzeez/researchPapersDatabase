@@ -1,8 +1,8 @@
-// TODO: Check if maximum load capacities for repeaters are enough
 // TODO: Check that end date is after start date
 
 import wixWindow from 'wix-window';
 
+// For highlighted members without a picture
 const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png"
 
 // Indexes to differentiate similar repeaters, item IDs, and other relevant elements of the page
