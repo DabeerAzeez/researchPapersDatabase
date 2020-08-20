@@ -6,11 +6,11 @@ $w.onReady(function () {
   // Loop over repeater items to hide show appropriate items based on availability
 	$w(REPEATER).onItemReady(async ($item, itemData, index) => {
 		if (itemData.image === undefined) {
-			$item("#imageComingSoon").expand();
-			$item("#equipmentImage").collapse();
+			await $item("#imageComingSoon").expand();
+			await $item("#equipmentImage").collapse();
 		} else {
-			$item("#imageComingSoon").collapse();
-			$item("#equipmentImage").expand();
+			await $item("#imageComingSoon").collapse();
+			await $item("#equipmentImage").expand();
 		}
 
 		if (itemData.productLink) {
@@ -37,17 +37,17 @@ export async function loadMoreButton_click(event) {
 	updateEndContainer(total);
 }
  */
-function updateEndContainer() {
-	let total = $w("#EquipmentDS").getTotalCount();
+async function updateEndContainer(total) {
+	
 	let nonZeroItems = total > 0;
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
 	// Show loading button only if there are more pages of papers to load
 	if (nonZeroItems && !allPagesLoaded) {
-		$w("#loadMoreButton").expand(); 
-		$w("#noLoadingButtons").collapse();
+		await $w("#loadMoreButton").expand(); 
+		await $w("#noLoadingButtons").collapse();
 	} else {
-		$w("#loadMoreButton").collapse(); 
-		$w("#noLoadingButtons").expand();
+		await $w("#loadMoreButton").collapse(); 
+		await $w("#noLoadingButtons").expand();
 	}
 }
