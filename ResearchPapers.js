@@ -38,7 +38,7 @@ $w.onReady(async function () {
 			let items = results.items;
 			const totalDatabaseItems = items.length;
 
-			// Update each publication's publication number automatically (as necessary) based on total number of papers
+			// Allow admins and owners to update publication number automatically (if necessary)
 			if (CURRENTUSER.loggedIn && CURRENTUSER.role === 'Admin' || 'Owner') {
 				for (var i = 0; i < items.length; i++) {
 					let item = items[i];
@@ -55,7 +55,7 @@ $w.onReady(async function () {
 			}
 		})
 
-	// refresh dataset if it was changed above
+	// Refresh dataset if it was changed above
 	if (databaseChanged) {
 		refreshDataset(DATASET)
 	} else {
@@ -73,7 +73,7 @@ $w.onReady(async function () {
 
 /**
  * Refreshes dataset and updates page elements afterwards.
- * @param {dataset} dataset - dataset to be refreshes
+ * @param {dataset} dataset - dataset to be refreshed
  */
 function refreshDataset(dataset) {
 	$w(dataset).onReady(() => {
@@ -87,26 +87,27 @@ function refreshDataset(dataset) {
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
 
 /**
- * Update dynamic page elements, including text results, repeater and container below repeater ("end container")
+ * Update dynamic page elements
  */
 function updateElements() {
-	let total = $w(DATASET).getTotalCount(); // Get total number of papers under current filter
+	let total = $w(DATASET).getTotalCount(); // Get total number of papers in dataset (i.e. under current filter)
 
 	updateTextResults(total);
 	updateEndContainer(total);
 	if (total > 0) {
-		updateRepeater(); // update repeater if there's items to put in it
+		updateRepeater(); // Update repeater if there's items to put in it
 	}
 	updateNoItemsFound(total)
 }
 
 /**
- * Update dynamic text at top of the page to show how many results there are and how many are being displayed
- * @param {number} total - total number of papers under current filter
+ * Update dynamic text at top of the page to show how many results are available and how many are being displayed
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateTextResults(total) {
 	let currentlyDisplayed = $w(REPEATER).data.length;
 
+  // Change wording of text results based on the total number of results
 	if (total > 1) {
 		$w('#textResults').text = `Showing ${currentlyDisplayed} of ${total} results`;
 	} else if (total === 1) {
@@ -119,24 +120,23 @@ function updateTextResults(total) {
 }
 
 /**
- * Check to see if all data from available results is being shown and toggle displaying 'loading buttons' appropriately with an
- * alternative container
- * @param {number} total - total number of papers under current filter
+ * Check to see if dataset results are being shown, toggle displaying 'loading buttons' with an alternative container
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateEndContainer(total) {
 	let nonZeroPapers = total > 0;
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
 	if (nonZeroPapers && !allPagesLoaded) {
-		showLoadingButtons(true); // Show loading buttons only if there are more pages of papers to load
+		showLoadingButtons(true); // Show loading buttons only if there are more items to load
 	} else {
 		showLoadingButtons(false);
 	}
 }
 
 /**
- * Toggles between showing loading buttons and alternative container instead
- * @param {boolean} choice - choice whether to show loading buttons or alternative container
+ * Toggles between showing loading buttons and alternative container
+ * @param {boolean} choice - choice whether to show loading buttons
  */
 function showLoadingButtons(choice) {
 	if (choice === true) {
@@ -162,9 +162,6 @@ function updateRepeater() {
     const YEARBOX_COLOR_LIGHT = "#FFBF3D";
     const YEARBOX_COLOR_DARK = "#DEA633"
 
-		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
-
-		// Show 'image unavailable' as necessary
     // Checking for missing fields
     try {
       let requiredFields = {
@@ -175,6 +172,10 @@ function updateRepeater() {
     } catch (error) {
       throw new Error("At least one required field is missing for item ID: ", itemData._id)
     }
+
+		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // Display publication number
+
+		// Display 'image unavailable' as necessary
 		if (!itemData.abstract) {
 			$item("#abstractUnavailable").show();
 		} else {
@@ -205,7 +206,7 @@ function updateRepeater() {
 		$item("#YearBox").style.backgroundColor = chosenColor;
 
 		// Show loading GIF and hide text results until last repeater item is loaded
-		if (index + 1 === $w(REPEATER).data.length) { // repeater index starts from 0
+		if (index + 1 === $w(REPEATER).data.length) { // index + 1 because repeater index starts from 0
 			$w("#loadingGIFTop").hide()
 			$w("#textResults").show()
 		} else {
@@ -218,7 +219,7 @@ function updateRepeater() {
 
 /**
  * Display some text to the user if no items exist in the filtered dataset (i.e. if search query leads to 0 results)
- * @param {number} total - total number of papers under current filter
+ * @param {number} total - total number of dataset items under current filter
  */
 async function updateNoItemsFound(total) {
 	if (total > 0) {
@@ -237,27 +238,29 @@ async function updateNoItemsFound(total) {
 /* IMAGE MOUSEIN-MOUSEOUT EVENT HANDLERS */
 
 /**
- * Fade in a border around the publication image on hover (done manually since hoverboxes not supported in repeaters)
+ * Fade in border around the publication image on mouse in (done manually since hoverboxes not supported in repeaters)
  * @param {mouseIn event} event - mouseIn event for each publication image container
  */
 export function publicationImage_mouseIn(event) {
-	let $item = $w.at(event.context);
+	let $item = $w.at(event.context); // Access item where event occurred
 	$item("#imageOverlay").show("fade", { "duration": 200 });
 }
 
 /**
- * Fade out a border around the publication image on mouse out (done manually since hoverboxes not supported in repeaters)
+ * Fade out border around the publication image on mouse out (done manually since hoverboxes not supported in repeaters)
  * @param {mouseIn event} event - mouseIn event for each publication image container
  */
 export function publicationImage_mouseOut(event) {
-	let $item = $w.at(event.context);
+	let $item = $w.at(event.context); // Access item where event occurred
 	$item("#imageOverlay").hide("fade", { "duration": 200 });
 }
 
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
+// TODO: Check if event handlers work without event parameter
+// TODO: Check what changes if updateElements(); is placed inside load all while loop
 
 /**
- * Manually load another page of data for the dataset and update dynamic page elements
+ * Load another page of data for the dataset and update dynamic page elements
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadMoreButton_click(event) {
@@ -268,7 +271,7 @@ export async function loadMoreButton_click(event) {
 }
 
 /**
- * Load pages of data incrmementally until all have been loaded, then update dynamic page elements
+ * Load pages of data and update dynamic page elements incrementally
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadAllButton_click(event) {
@@ -302,7 +305,7 @@ export function searchResetButton_click(event) {
 	filterDataset("");
 }
 
-let debounceTimer;
+let debounceTimer; // To limit number of search queries per time interval
 const DEBOUNCE_TIME = 200;
 
 function filterDataset(searchQuery) {
@@ -311,14 +314,13 @@ function filterDataset(searchQuery) {
 	$w("#loadingGIFTop").show();
 	$w("#textResults").text = "Processing...";
 
-	// Make sure the user doesn't get ahead of the browser
 	if (debounceTimer) {
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}
 
 	debounceTimer = setTimeout(() => {
-		// filter dataset for items with title / content fields that contain the search query
+		// Filter dataset for items with title or content fields that contain the search query, then update page elements
 		$w(DATASET).setFilter(wixData.filter().contains("title", searchQuery)
 				.or(wixData.filter().contains("content", searchQuery)))
 			.then(() => updateElements())
