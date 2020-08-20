@@ -1,13 +1,15 @@
 /**
- * See documentation under 'Research Papers' page for more information
+ * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
  */
 
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
+import wixUsers from 'wix-users';
 
 const DATABASE = "Patents"
-const DATASET = "#PatentsDS" 
+const DATASET = "#PatentsDS"
 const REPEATER = " #PatentsRepeater"
+const CURRENTUSER = wixUsers.currentUser;
 
 /*
 FOR REFERENCE, each database item has the following properties:
@@ -22,7 +24,6 @@ interface ResearchPaperItem {
 }
 */
 
-
 /**** ON PAGE LOAD ****/
 
 $w.onReady(async function () {
@@ -30,31 +31,35 @@ $w.onReady(async function () {
 
 	await wixData.query(DATABASE)
 		.limit(1000)
-		.descending("filingDate") // sort query by date
+		.descending("filingDate") // Sort query by date (newest items first)
 		.find()
-		.then((results) => {
+		.then(async (results) => {
 			let items = results.items;
 			const totalDatabaseItems = items.length;
-			
-			// Update each publication's publication number automatically (as necessary) based on total number of papers
-			for (var i = 0; i < items.length; i++) {
-				let item = items[i];
-				let properIndex = totalDatabaseItems - i;
-				if (item.publicationNumber !== properIndex) {
-					item.publicationNumber = properIndex;
-					wixData.update(DATABASE, item);
 
-					if (databaseChanged === false) {
-						databaseChanged = true;
+			// Allow admins and owners to update publication number automatically (if necessary)
+			if (CURRENTUSER.loggedIn && CURRENTUSER.role === 'Admin' || 'Owner') {
+				for (var i = 0; i < items.length; i++) {
+					let item = items[i];
+					let properIndex = totalDatabaseItems - i;
+					if (item.publicationNumber !== properIndex) {
+						item.publicationNumber = properIndex;
+						await wixData.update(DATABASE, item);
+
+						if (databaseChanged === false) {
+							databaseChanged = true;
+						}
 					}
 				}
 			}
 		})
 
-	// refresh dataset if it was changed above
+	// Refresh dataset if it was changed above
 	if (databaseChanged) {
-		$w(DATASET).onReady(() => refreshDataset()); 
-	}
+		refreshDataset(DATASET)
+	} else {
+    updateElements();
+  }
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
@@ -62,43 +67,46 @@ $w.onReady(async function () {
 	} else {
 		$w("#mobileAlertMessage").collapse();
 	}
-	
+
 });
 
 /**
- * Reloads dataset and updates page elements thrice. Refreshing and updating the elements fewer than three times didn't 
- * seem to actually change the repeater's contents, so this is the current solution.
+ * Refreshes dataset and updates page elements afterwards.
+ * @param {dataset} dataset - dataset to be refreshed
  */
-export function refreshDataset() {	
-	for (var i = 0; i < 3; i++) {
-			$w(DATASET).refresh().then(() => updateElements()); 
-		}
+function refreshDataset(dataset) {
+	$w(dataset).onReady(() => {
+		$w(dataset).refresh()
+			.then(() => {
+				updateElements();
+			});
+	})
 }
-
 
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
 
 /**
- * Update dynamic page elements, including text results, repeater and container below repeater ("end container")
+ * Update dynamic page elements
  */
 function updateElements() {
-	let total = $w(DATASET).getTotalCount(); // Get total number of papers under current filter
+	let total = $w(DATASET).getTotalCount(); // Get total number of papers in dataset (i.e. under current filter)
 
 	updateTextResults(total);
 	updateEndContainer(total);
 	if (total > 0) {
-		updateRepeater(); // update repeater if there's items to put in it
+		updateRepeater(); // Update repeater if there's items to put in it
 	}
 	updateNoItemsFound(total)
 }
 
 /**
- * Update dynamic text at top of the page to show how many results there are and how many are being displayed
- * @param {number} total - total number of papers under current filter
+ * Update dynamic text at top of the page to show how many results are available and how many are being displayed
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateTextResults(total) {
 	let currentlyDisplayed = $w(REPEATER).data.length;
 
+  // Change wording of text results based on the total number of results
 	if (total > 1) {
 		$w('#textResults').text = `Showing ${currentlyDisplayed} of ${total} results`;
 	} else if (total === 1) {
@@ -111,24 +119,23 @@ function updateTextResults(total) {
 }
 
 /**
- * Check to see if all data from available results is being shown and toggle displaying 'loading buttons' appropriately with an
- * alternative container
- * @param {number} total - total number of papers under current filter
+ * Check to see if dataset results are being shown, toggle displaying 'loading buttons' with an alternative container
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateEndContainer(total) {
 	let nonZeroPapers = total > 0;
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
 	if (nonZeroPapers && !allPagesLoaded) {
-		showLoadingButtons(true); // Show loading buttons only if there are more pages of papers to load
+		showLoadingButtons(true); // Show loading buttons only if there are more items to load
 	} else {
 		showLoadingButtons(false);
 	}
 }
 
 /**
- * Toggles between showing loading buttons and alternative container instead
- * @param {boolean} choice - choice whether to show loading buttons or alternative container
+ * Toggles between showing loading buttons and alternative container
+ * @param {boolean} choice - choice whether to show loading buttons
  */
 function showLoadingButtons(choice) {
 	if (choice === true) {
@@ -145,56 +152,66 @@ function showLoadingButtons(choice) {
 /**
  * Loop over repeater items to style and notate various components based on item data
  */
-async function updateRepeater() {
+function updateRepeater() {
 	let previousItemYear;
 	let colorFlag = true;
 
 	// Loop over repeater items
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
+    const YEARBOX_COLOR_LIGHT = "#FFBF3D";
+    const YEARBOX_COLOR_DARK = "#DEA633";
+
+    // Checking for missing fields
+    try {
+      let requiredFields = {
+        title: itemData.title,
+        citation: itemData.citation,
+        filingDate: itemData.filingDate
+      }
+    } catch (error) {
+      throw new Error("At least one required field is missing for item ID: ", itemData._id)
+    }
 
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
 
-		// Change colour of year box to make different years stand out from each other in the repeater
-		try {
-			let currentYear = itemData.filingDate.getFullYear()
-
-			if (index === 0) {
-				colorFlag = true; // make the first yearbox a bright yellow
-			} else if (previousItemYear !== currentYear) {
-				colorFlag = !colorFlag; // toggle color flag if the year changes between two repeater items
-			}
-
-			previousItemYear = currentYear;
-
-			let chosenColor = colorFlag ? "#FFBF3D" : "#dea633"; // choose between a bright / darker colour for the year box
-			$item("#YearBox").style.backgroundColor = chosenColor;
-		} catch (err) {
-			$item("#YearBox").style.backgroundColor = "#000000"; // Make sidebar black if error (e.g. if no date available)
-		}
-
-		// Show loading GIF and hide text results until last repeater item is loaded
-		if (index + 1 === $w(REPEATER).data.length) { // repeater index starts from 0
-			$w("#loadingGIFTop").hide()
-			$w("#textResults").show()
-		} else {
-			$w("#loadingGIFTop").show()
-			$w("#textResults").hide()
-		}
-
-		// show link button and dashed line if link is available
+        // Display link button and dashed line if link is available
 		if (itemData.link) {
 			$item("#linkButton").show()
 			$item("#numToButtonLine").show()
 		} else {
 			$item("#linkButton").hide()
 			$item("#numToButtonLine").hide()
+    }
+    
+    let currentYear = itemData.filingDate.getFullYear()
+
+    // Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
+		if (index === 0) {
+			colorFlag = true; // Bright color for top-most repeater item
+		} else if (previousItemYear !== currentYear) {
+			colorFlag = !colorFlag; 
 		}
-	});
+
+		previousItemYear = currentYear;
+
+		let chosenColor = colorFlag ? YEARBOX_COLOR_LIGHT : YEARBOX_COLOR_DARK;
+		$item("#YearBox").style.backgroundColor = chosenColor;
+
+		// Show loading GIF and hide text results until last repeater item is loaded
+		if (index + 1 === $w(REPEATER).data.length) { // index + 1 because repeater index starts from 0
+			$w("#loadingGIFTop").hide()
+			$w("#textResults").show()
+		} else {
+			$w("#loadingGIFTop").show()
+			$w("#textResults").hide()
+		}
+    
+  });
 }
 
 /**
  * Display some text to the user if no items exist in the filtered dataset (i.e. if search query leads to 0 results)
- * @param {number} total - total number of papers under current filter
+ * @param {number} total - total number of dataset items under current filter
  */
 async function updateNoItemsFound(total) {
 	if (total > 0) {
@@ -205,17 +222,15 @@ async function updateNoItemsFound(total) {
 		await $w(REPEATER).collapse();
 	} else {
 		throw new Error("Improper usage of noItemsCheck(), cannot parse input: ", total)
-  }
-  
-  $w("#loadingGIFTop").hide();
+	}
+
+	$w("#loadingGIFTop").hide();
 }
-
-
 
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
 
 /**
- * Manually load another page of data for the dataset and update dynamic page elements
+ * Load another page of data for the dataset and update dynamic page elements
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadMoreButton_click(event) {
@@ -226,7 +241,7 @@ export async function loadMoreButton_click(event) {
 }
 
 /**
- * Load pages of data incrmementally until all have been loaded, then update dynamic page elements
+ * Load pages of data and update dynamic page elements incrementally
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadAllButton_click(event) {
@@ -240,7 +255,6 @@ export async function loadAllButton_click(event) {
 	updateElements();
 	$w("#loadingGIFAll").hide();
 }
-
 
 /**** SEARCH BOX AND SEARCH RESET EVENT HANDLERS ****/
 
@@ -261,7 +275,8 @@ export function searchResetButton_click(event) {
 	filterDataset("");
 }
 
-let debounceTimer;
+let debounceTimer; // To limit number of search queries per time interval
+const DEBOUNCE_TIME = 200;
 
 function filterDataset(searchQuery) {
 
@@ -269,18 +284,19 @@ function filterDataset(searchQuery) {
 	$w("#loadingGIFTop").show();
 	$w("#textResults").text = "Processing...";
 
-	// Make sure the user doesn't get ahead of the browser
 	if (debounceTimer) {
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}
 
 	debounceTimer = setTimeout(() => {
-		// filter dataset for items with title / content fields that contain the search query
+		// Filter dataset for items with title or content fields that contain the search query, then update page elements
 		$w(DATASET).setFilter(wixData.filter().contains("title", searchQuery)
-				.or(wixData.filter().contains("content", $w("#searchBar").value)))
+				.or(wixData.filter().contains("content", searchQuery)))
 			.then(() => updateElements())
-	}, 200);
+	}, DEBOUNCE_TIME);
 
-	$w(DATASET).loadPage(1); // By default load only first page of data for any new search query
+  if ($w(DATASET).getTotalCount() > 0) {
+    $w(DATASET).loadPage(1); // Load only first page of data for any new search query
+  }
 }
