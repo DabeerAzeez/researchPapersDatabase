@@ -303,6 +303,7 @@ export function searchResetButton_click(event) {
 }
 
 let debounceTimer;
+const DEBOUNCE_TIME = 200;
 
 function filterDataset(searchQuery) {
 
@@ -321,7 +322,7 @@ function filterDataset(searchQuery) {
 		$w(DATASET).setFilter(wixData.filter().contains("title", searchQuery)
 				.or(wixData.filter().contains("content", searchQuery)))
 			.then(() => updateElements())
-	}, 200);
+	}, DEBOUNCE_TIME);
 
 	$w(DATASET).loadPage(1); // By default load only first page of data for any new search query
 }
