@@ -96,18 +96,6 @@ function setUpAlumniRepeater() {
 			}
 		} else {
 			alumnusDescription = memberType + optionalNewLine + " (" + itemData.adtOverride + ")";
-
-			// remove start and end dates for an alumnus who has an override
-			if (CURRENTUSER.loggedIn && CURRENTUSER.role === 'Admin' || 'Owner') {
-				wixData.get(DATABASE, itemData._id)
-					.then((item) => {
-						console.log(item);
-						item.startTime = undefined;
-						item.endTime = undefined;
-						wixData.update(DATABASE, item);
-					})
-			}
-
 		}
 
 		$item("#alumnusDescription").text = alumnusDescription;
