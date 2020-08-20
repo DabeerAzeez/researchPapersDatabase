@@ -58,7 +58,7 @@ $w.onReady(async function () {
 
 	// refresh dataset if it was changed above
 	if (databaseChanged) {
-		refreshDataset()
+		refreshDataset(DATASET)
 	}
 
 	updateElements();
@@ -74,10 +74,11 @@ $w.onReady(async function () {
 
 /**
  * Refreshes dataset and updates page elements afterwards.
+ * @param {dataset} dataset - dataset to be refreshes
  */
-export function refreshDataset() {
-	$w(DATASET).onReady(() => {
-		$w(DATASET).refresh()
+function refreshDataset(dataset) {
+	$w(dataset).onReady(() => {
+		$w(dataset).refresh()
 			.then(() => {
 				updateElements();
 			});
