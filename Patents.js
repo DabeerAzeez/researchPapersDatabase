@@ -184,6 +184,14 @@ async function updateRepeater() {
 			} else if (previousItemYear !== currentYear) {
 				colorFlag = !colorFlag; // toggle color flag if the year changes between two repeater items
 			}
+        // Display link button and dashed line if link is available
+		if (itemData.link) {
+			$item("#linkButton").show()
+			$item("#numToButtonLine").show()
+		} else {
+			$item("#linkButton").hide()
+			$item("#numToButtonLine").hide()
+    }
 
 			previousItemYear = currentYear;
 
@@ -201,16 +209,6 @@ async function updateRepeater() {
 			$w("#loadingGIFTop").show()
 			$w("#textResults").hide()
 		}
-
-		// show link button and dashed line if link is available
-		if (itemData.link) {
-			$item("#linkButton").show()
-			$item("#numToButtonLine").show()
-		} else {
-			$item("#linkButton").hide()
-			$item("#numToButtonLine").hide()
-		}
-	});
 }
 
 /**
