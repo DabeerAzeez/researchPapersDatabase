@@ -12,12 +12,13 @@ const MASC_STUDENTS = "MAS";
 const UNDERGRADUATES = "UND";
 const ALUMNI = "ALM";
 
-const MEMBER_TYPES = [POST_DOCTORAL_FELLOWS, PHD_STUDENTS, MASC_STUDENTS, UNDERGRADUATES]
+// Member types that are highlighted with image repeaters
+const HIGHLIGHTED_MEMBERS = [POST_DOCTORAL_FELLOWS, PHD_STUDENTS, MASC_STUDENTS, UNDERGRADUATES]
 
 $w.onReady(function () {
 
 	// Set up image repeaters for each member type
-	MEMBER_TYPES.forEach((memberType) => {
+	HIGHLIGHTED_MEMBERS.forEach((memberType) => {
 		$w("#Dataset" + memberType).onReady(() => setUpImgRepeater(memberType)); // set up repeater for each member type
 	});
 
