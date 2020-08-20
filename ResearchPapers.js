@@ -153,7 +153,7 @@ function showLoadingButtons(choice) {
 /**
  * Loop over repeater items to style and notate various components based on item data
  */
-async function updateRepeater() {
+function updateRepeater() {
 	let previousItemYear;
 	let colorFlag = true;
 
