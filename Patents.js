@@ -6,10 +6,12 @@
 
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
+import wixUsers from 'wix-users';
 
 const DATABASE = "Patents"
-const DATASET = "#PatentsDS" 
+const DATASET = "#PatentsDS"
 const REPEATER = " #PatentsRepeater"
+const CURRENTUSER = wixUsers.currentUser;
 
 /*
 FOR REFERENCE, each database item has the following properties:
@@ -32,31 +34,35 @@ $w.onReady(async function () {
 
 	await wixData.query(DATABASE)
 		.limit(1000)
-		.descending("filingDate") // sort query by date
+		.descending("filingDate") // Sort query by date (newest items first)
 		.find()
-		.then((results) => {
+		.then(async (results) => {
 			let items = results.items;
 			const totalDatabaseItems = items.length;
-			
-			// Update each publication's publication number automatically (as necessary) based on total number of papers
-			for (var i = 0; i < items.length; i++) {
-				let item = items[i];
-				let properIndex = totalDatabaseItems - i;
-				if (item.publicationNumber !== properIndex) {
-					item.publicationNumber = properIndex;
-					wixData.update(DATABASE, item);
 
-					if (databaseChanged === false) {
-						databaseChanged = true;
+			// Allow admins and owners to update publication number automatically (if necessary)
+			if (CURRENTUSER.loggedIn && CURRENTUSER.role === 'Admin' || 'Owner') {
+				for (var i = 0; i < items.length; i++) {
+					let item = items[i];
+					let properIndex = totalDatabaseItems - i;
+					if (item.publicationNumber !== properIndex) {
+						item.publicationNumber = properIndex;
+						await wixData.update(DATABASE, item);
+
+						if (databaseChanged === false) {
+							databaseChanged = true;
+						}
 					}
 				}
 			}
 		})
 
-	// refresh dataset if it was changed above
+	// Refresh dataset if it was changed above
 	if (databaseChanged) {
-		$w(DATASET).onReady(() => refreshDataset()); 
-	}
+		refreshDataset(DATASET)
+	} else {
+    updateElements();
+  }
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
@@ -68,13 +74,16 @@ $w.onReady(async function () {
 });
 
 /**
- * Reloads dataset and updates page elements thrice. Refreshing and updating the elements fewer than three times didn't 
- * seem to actually change the repeater's contents, so this is the current solution.
+ * Refreshes dataset and updates page elements afterwards.
+ * @param {dataset} dataset - dataset to be refreshed
  */
-export function refreshDataset() {	
-	for (var i = 0; i < 3; i++) {
-			$w(DATASET).refresh().then(() => updateElements()); 
-		}
+function refreshDataset(dataset) {
+	$w(dataset).onReady(() => {
+		$w(dataset).refresh()
+			.then(() => {
+				updateElements();
+			});
+	})
 }
 
 
