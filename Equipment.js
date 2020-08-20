@@ -18,7 +18,7 @@ $w.onReady(function () {
 		} else {
 			$item("#linkButton").hide();
 		}
-	}))
+	});
 });
 
 /**
