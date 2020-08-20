@@ -6,11 +6,11 @@ const DATASET = "#EquipmentDS"
 const REPEATER = " #EquipmentRepeater"
 
 $w.onReady(function () {
-  
-  // Loop over repeater items to hide show appropriate items based on availability
+
+	// Loop over repeater items to hide show appropriate items based on availability
 	$w(REPEATER).onItemReady(async ($item, itemData, index) => {
 
-    // Show 'image coming soon' if image is unavailable
+		// Show 'image coming soon' if image is unavailable
 		if (itemData.image === undefined) {
 			await $item("#imageComingSoon").expand();
 			await $item("#equipmentImage").collapse();
@@ -19,7 +19,7 @@ $w.onReady(function () {
 			await $item("#equipmentImage").expand();
 		}
 
-    // Show link button if link is available
+		// Show link button if link is available
 		if (itemData.productLink) {
 			$item("#linkButton").show();
 		} else {
@@ -35,9 +35,9 @@ $w.onReady(function () {
 export async function loadMoreButton_click(event) {
 	$w("#loadingGIFmore").show();
 	await $w(DATASET).loadMore();
-  $w("#loadingGIFmore").hide();
-  
-  let total = $w(DATASET).getTotalCount();
+	$w("#loadingGIFmore").hide();
+
+	let total = $w(DATASET).getTotalCount();
 
 	updateEndContainer(total);
 }
@@ -47,7 +47,7 @@ export async function loadMoreButton_click(event) {
  * @param {number} total - total number of dataset items under current filter
  */
 async function updateEndContainer(total) {
-	
+
 	let nonZeroItems = total > 0;
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
