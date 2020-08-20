@@ -1,7 +1,10 @@
 const DATASET = "#EquipmentDS"
+const REPEATER = " #EquipmentRepeater"
+
 $w.onReady(function () {
-	// Show 'image coming soon' if image unavailable
-	$w("#EquipmentRepeater").onItemReady((($item, itemData, index) => {
+  
+  // Loop over repeater items to hide show appropriate items based on availability
+	$w(REPEATER).onItemReady(async ($item, itemData, index) => {
 		if (itemData.image === undefined) {
 			$item("#imageComingSoon").expand();
 			$item("#equipmentImage").collapse();
