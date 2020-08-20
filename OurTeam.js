@@ -97,10 +97,11 @@ function setUpAlumniRepeater() {
 		let endYear = endDate.getFullYear();
 		let alumnusDescription = "";
 
+		if (!itemData.adtOverride) {
 			if (startYear === endYear) {
-				alumnusDescription = memberType + optionalNewLine + " (" + startYear + ")";
+				alumnusDescription = memberType + optionalNewLine + " (" + startYear.toString() + ")";
 			} else {
-				alumnusDescription = memberType + optionalNewLine + " (" + startYear + " - " + endYear + ")";
+				alumnusDescription = memberType + optionalNewLine + " (" + startYear.toString() + " - " + endYear.toString() + ")";
 			}
 		} else {
 			alumnusDescription = memberType + optionalNewLine + " (" + itemData.adtOverride + ")";
