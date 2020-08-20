@@ -324,5 +324,7 @@ function filterDataset(searchQuery) {
 			.then(() => updateElements())
 	}, DEBOUNCE_TIME);
 
-	$w(DATASET).loadPage(1); // By default load only first page of data for any new search query
+  if ($w(DATASET).getTotalCount() > 0) {
+    $w(DATASET).loadPage(1); // Load only first page of data for any new search query
+  }
 }
