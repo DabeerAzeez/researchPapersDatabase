@@ -179,6 +179,15 @@ function updateRepeater() {
 			$item("#abstractUnavailable").show();
 		} else {
 			$item("#abstractUnavailable").hide();
+    }
+    
+    // Display link button and dashed line if link is available
+		if (itemData.link) {
+			$item("#linkButton").show()
+			$item("#numToButtonLine").show()
+		} else {
+			$item("#linkButton").hide()
+			$item("#numToButtonLine").hide()
 		}
 
 		let currentYear = itemData.publicationDate.getFullYear()
