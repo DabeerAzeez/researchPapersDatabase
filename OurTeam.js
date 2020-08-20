@@ -64,10 +64,6 @@ function setUpImgRepeater(memberType) {
  */
 function setUpAlumniRepeater() {
 	$w("#Repeater" + ALUMNI).forEachItem(($item, itemData, index) => {
-		let alumnusDescription;
-		let startYear;
-		let endYear;
-		let memberType;
 		// Checking for missing fields
 		let requiredProperties = ["name", "alumnus", "memberType", "startTime", "endTime"]
 
