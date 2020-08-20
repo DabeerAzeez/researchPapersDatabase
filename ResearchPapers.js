@@ -1,14 +1,5 @@
 /**
- * Hoare Lab Research Papers Interactive Database
- * by Dabeer Abdul-Azeez | Most recently updated: Aug. 17th, 2020
- * 
- * @implements Wix Corvid API (see documentation here: https://www.wix.com/corvid/reference/api-overview/introduction)
- * Built for https://hoaretr.wixsite.com/hoarelab/researchpapers
- * 
- * An interactive database of papers authored by members of the Hoare Laboratory for Engineered Smart Materials. Allows
- * users to search all published papers, complete with titles, citations, links to the online versions of the journals, 
- * featured photos of graphical abstracts or interesting figures, and a search bar which dynamically updates the website
- * content to deliver the research papers filtered to your liking.
+ * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
  */
 
 import wixData from 'wix-data';
@@ -18,6 +9,7 @@ import wixUsers from 'wix-users';
 const DATABASE = "ResearchPapers"
 const DATASET = "#RPDataSet"
 const REPEATER = " #PublicationsRepeater"
+const CURRENTUSER = wixUsers.currentUser;
 
 /*
 FOR REFERENCE, each database item has the following properties:
@@ -37,18 +29,17 @@ interface ResearchPaperItem {
 
 $w.onReady(async function () {
 	let databaseChanged = false;
-	const currentUser = wixUsers.currentUser;
-
+	
 	await wixData.query(DATABASE)
 		.limit(1000)
-		.descending("publicationDate") // sort query by date (newest items first)
+		.descending("publicationDate") // Sort query by date (newest items first)
 		.find()
 		.then(async (results) => {
 			let items = results.items;
 			const totalDatabaseItems = items.length;
 
-			// Update each publication's publication number automatically (as necessary) based on total number of papers
-			if (currentUser.loggedIn && currentUser.role === 'Admin') {
+			// Allow admins and owners to update publication number automatically (if necessary)
+			if (CURRENTUSER.loggedIn && CURRENTUSER.role === 'Admin' || 'Owner') {
 				for (var i = 0; i < items.length; i++) {
 					let item = items[i];
 					let properIndex = totalDatabaseItems - i;
@@ -64,28 +55,29 @@ $w.onReady(async function () {
 			}
 		})
 
-	// refresh dataset if it was changed above
+	// Refresh dataset if it was changed above
 	if (databaseChanged) {
-		refreshDataset()
-	}
-
-	updateElements();
+		refreshDataset(DATASET)
+	} else {
+    updateElements();
+  }
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
-		$w("#mobileAlertMessage").expand();
+		await $w("#mobileAlertMessage").expand();
 	} else {
-		$w("#mobileAlertMessage").collapse();
+		await $w("#mobileAlertMessage").collapse();
 	}
 
 });
 
 /**
  * Refreshes dataset and updates page elements afterwards.
+ * @param {dataset} dataset - dataset to be refreshed
  */
-export function refreshDataset() {
-	$w(DATASET).onReady(() => {
-		$w(DATASET).refresh()
+function refreshDataset(dataset) {
+	$w(dataset).onReady(() => {
+		$w(dataset).refresh()
 			.then(() => {
 				updateElements();
 			});
@@ -95,26 +87,27 @@ export function refreshDataset() {
 /**** UPDATING DYNAMIC PAGE ELEMENTS ****/
 
 /**
- * Update dynamic page elements, including text results, repeater and container below repeater ("end container")
+ * Update dynamic page elements
  */
 function updateElements() {
-	let total = $w(DATASET).getTotalCount(); // Get total number of papers under current filter
+	let total = $w(DATASET).getTotalCount(); // Get total number of papers in dataset (i.e. under current filter)
 
 	updateTextResults(total);
 	updateEndContainer(total);
 	if (total > 0) {
-		updateRepeater(); // update repeater if there's items to put in it
+		updateRepeater(); // Update repeater if there's items to put in it
 	}
 	updateNoItemsFound(total)
 }
 
 /**
- * Update dynamic text at top of the page to show how many results there are and how many are being displayed
- * @param {number} total - total number of papers under current filter
+ * Update dynamic text at top of the page to show how many results are available and how many are being displayed
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateTextResults(total) {
 	let currentlyDisplayed = $w(REPEATER).data.length;
 
+  // Change wording of text results based on the total number of results
 	if (total > 1) {
 		$w('#textResults').text = `Showing ${currentlyDisplayed} of ${total} results`;
 	} else if (total === 1) {
@@ -127,24 +120,23 @@ function updateTextResults(total) {
 }
 
 /**
- * Check to see if all data from available results is being shown and toggle displaying 'loading buttons' appropriately with an
- * alternative container
- * @param {number} total - total number of papers under current filter
+ * Check to see if dataset results are being shown, toggle displaying 'loading buttons' with an alternative container
+ * @param {number} total - total number of dataset items under current filter
  */
 function updateEndContainer(total) {
 	let nonZeroPapers = total > 0;
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
 	if (nonZeroPapers && !allPagesLoaded) {
-		showLoadingButtons(true); // Show loading buttons only if there are more pages of papers to load
+		showLoadingButtons(true); // Show loading buttons only if there are more items to load
 	} else {
 		showLoadingButtons(false);
 	}
 }
 
 /**
- * Toggles between showing loading buttons and alternative container instead
- * @param {boolean} choice - choice whether to show loading buttons or alternative container
+ * Toggles between showing loading buttons and alternative container
+ * @param {boolean} choice - choice whether to show loading buttons
  */
 function showLoadingButtons(choice) {
 	if (choice === true) {
@@ -161,50 +153,36 @@ function showLoadingButtons(choice) {
 /**
  * Loop over repeater items to style and notate various components based on item data
  */
-async function updateRepeater() {
+function updateRepeater() {
 	let previousItemYear;
 	let colorFlag = true;
 
 	// Loop over repeater items
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
+    const YEARBOX_COLOR_LIGHT = "#FFBF3D";
+    const YEARBOX_COLOR_DARK = "#DEA633";
 
-		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
+    // Checking for missing fields
+    try {
+      let requiredFields = {
+        title: itemData.title,
+        citation: itemData.content,
+        publicationDate: itemData.publicationDate
+      }
+    } catch (error) {
+      throw new Error("At least one required field is missing for item ID: ", itemData._id)
+    }
 
-		// Show 'image unavailable' as necessary
+		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // Display publication number
+
+		// Display 'image unavailable' as necessary
 		if (!itemData.abstract) {
 			$item("#abstractUnavailable").show();
 		} else {
 			$item("#abstractUnavailable").hide();
-		}
-
-		// Change colour of year box to make different years stand out from each other in the repeater
-		try {
-			let currentYear = itemData.publicationDate.getFullYear()
-
-			if (index === 0) {
-				colorFlag = true; // make the first yearbox a bright yellow
-			} else if (previousItemYear !== currentYear) {
-				colorFlag = !colorFlag; // toggle color flag if the year changes between two repeater items
-			}
-
-			previousItemYear = currentYear;
-
-			let chosenColor = colorFlag ? "#FFBF3D" : "#dea633"; // choose between a bright / darker colour for the year box
-			$item("#YearBox").style.backgroundColor = chosenColor;
-		} catch (err) {
-			$item("#YearBox").style.backgroundColor = "#000000"; // Make sidebar black if error (e.g. if no date available)
-		}
-
-		// Show loading GIF and hide text results until last repeater item is loaded
-		if (index + 1 === $w(REPEATER).data.length) { // repeater index starts from 0
-			$w("#loadingGIFTop").hide()
-			$w("#textResults").show()
-		} else {
-			$w("#loadingGIFTop").show()
-			$w("#textResults").hide()
-		}
-
-		// show link button and dashed line if link is available
+    }
+    
+    // Display link button and dashed line if link is available
 		if (itemData.link) {
 			$item("#linkButton").show()
 			$item("#numToButtonLine").show()
@@ -212,12 +190,36 @@ async function updateRepeater() {
 			$item("#linkButton").hide()
 			$item("#numToButtonLine").hide()
 		}
+
+		let currentYear = itemData.publicationDate.getFullYear()
+
+    // Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
+		if (index === 0) {
+			colorFlag = true; // Bright color for top-most repeater item
+		} else if (previousItemYear !== currentYear) {
+			colorFlag = !colorFlag; 
+		}
+
+		previousItemYear = currentYear;
+
+		let chosenColor = colorFlag ? YEARBOX_COLOR_LIGHT : YEARBOX_COLOR_DARK;
+		$item("#YearBox").style.backgroundColor = chosenColor;
+
+		// Show loading GIF and hide text results until last repeater item is loaded
+		if (index + 1 === $w(REPEATER).data.length) { // index + 1 because repeater index starts from 0
+			$w("#loadingGIFTop").hide()
+			$w("#textResults").show()
+		} else {
+			$w("#loadingGIFTop").show()
+			$w("#textResults").hide()
+		}
+		
 	});
 }
 
 /**
  * Display some text to the user if no items exist in the filtered dataset (i.e. if search query leads to 0 results)
- * @param {number} total - total number of papers under current filter
+ * @param {number} total - total number of dataset items under current filter
  */
 async function updateNoItemsFound(total) {
 	if (total > 0) {
@@ -236,27 +238,29 @@ async function updateNoItemsFound(total) {
 /* IMAGE MOUSEIN-MOUSEOUT EVENT HANDLERS */
 
 /**
- * Fade in a border around the publication image on hover (done manually since hoverboxes not supported in repeaters)
+ * Fade in border around the publication image on mouse in (done manually since hoverboxes not supported in repeaters)
  * @param {mouseIn event} event - mouseIn event for each publication image container
  */
 export function publicationImage_mouseIn(event) {
-	let $item = $w.at(event.context);
+	let $item = $w.at(event.context); // Access item where event occurred
 	$item("#imageOverlay").show("fade", { "duration": 200 });
 }
 
 /**
- * Fade out a border around the publication image on mouse out (done manually since hoverboxes not supported in repeaters)
+ * Fade out border around the publication image on mouse out (done manually since hoverboxes not supported in repeaters)
  * @param {mouseIn event} event - mouseIn event for each publication image container
  */
 export function publicationImage_mouseOut(event) {
-	let $item = $w.at(event.context);
+	let $item = $w.at(event.context); // Access item where event occurred
 	$item("#imageOverlay").hide("fade", { "duration": 200 });
 }
 
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
+// TODO: Check if event handlers work without event parameter
+// TODO: Check what changes if updateElements(); is placed inside load all while loop
 
 /**
- * Manually load another page of data for the dataset and update dynamic page elements
+ * Load another page of data for the dataset and update dynamic page elements
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadMoreButton_click(event) {
@@ -267,7 +271,7 @@ export async function loadMoreButton_click(event) {
 }
 
 /**
- * Load pages of data incrmementally until all have been loaded, then update dynamic page elements
+ * Load pages of data and update dynamic page elements incrementally
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadAllButton_click(event) {
@@ -301,7 +305,8 @@ export function searchResetButton_click(event) {
 	filterDataset("");
 }
 
-let debounceTimer;
+let debounceTimer; // To limit number of search queries per time interval
+const DEBOUNCE_TIME = 200;
 
 function filterDataset(searchQuery) {
 
@@ -309,18 +314,19 @@ function filterDataset(searchQuery) {
 	$w("#loadingGIFTop").show();
 	$w("#textResults").text = "Processing...";
 
-	// Make sure the user doesn't get ahead of the browser
 	if (debounceTimer) {
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}
 
 	debounceTimer = setTimeout(() => {
-		// filter dataset for items with title / content fields that contain the search query
+		// Filter dataset for items with title or content fields that contain the search query, then update page elements
 		$w(DATASET).setFilter(wixData.filter().contains("title", searchQuery)
 				.or(wixData.filter().contains("content", searchQuery)))
 			.then(() => updateElements())
-	}, 200);
+	}, DEBOUNCE_TIME);
 
-	$w(DATASET).loadPage(1); // By default load only first page of data for any new search query
+  if ($w(DATASET).getTotalCount() > 0) {
+    $w(DATASET).loadPage(1); // Load only first page of data for any new search query
+  }
 }
