@@ -1,14 +1,5 @@
 /**
- * Hoare Lab Research Papers Interactive Database
- * by Dabeer Abdul-Azeez | Most recently updated: Aug. 17th, 2020
- * 
- * @implements Wix Corvid API (see documentation here: https://www.wix.com/corvid/reference/api-overview/introduction)
- * Built for https://hoaretr.wixsite.com/hoarelab/researchpapers
- * 
- * An interactive database of papers authored by members of the Hoare Laboratory for Engineered Smart Materials. Allows
- * users to search all published papers, complete with titles, citations, links to the online versions of the journals, 
- * featured photos of graphical abstracts or interesting figures, and a search bar which dynamically updates the website
- * content to deliver the research papers filtered to your liking.
+ * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
  */
 
 import wixData from 'wix-data';
