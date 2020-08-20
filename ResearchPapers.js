@@ -32,7 +32,7 @@ $w.onReady(async function () {
 	
 	await wixData.query(DATABASE)
 		.limit(1000)
-		.descending("publicationDate") // sort query by date (newest items first)
+		.descending("publicationDate") // Sort query by date (newest items first)
 		.find()
 		.then(async (results) => {
 			let items = results.items;
@@ -58,9 +58,9 @@ $w.onReady(async function () {
 	// refresh dataset if it was changed above
 	if (databaseChanged) {
 		refreshDataset(DATASET)
-	}
-
-	updateElements();
+	} else {
+    updateElements();
+  }
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
