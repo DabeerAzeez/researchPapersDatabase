@@ -9,6 +9,7 @@ import wixUsers from 'wix-users';
 const DATABASE = "ResearchPapers"
 const DATASET = "#RPDataSet"
 const REPEATER = " #PublicationsRepeater"
+const CURRENTUSER = wixUsers.currentUser;
 
 /*
 FOR REFERENCE, each database item has the following properties:
@@ -28,8 +29,7 @@ interface ResearchPaperItem {
 
 $w.onReady(async function () {
 	let databaseChanged = false;
-	const currentUser = wixUsers.currentUser;
-
+	
 	await wixData.query(DATABASE)
 		.limit(1000)
 		.descending("publicationDate") // sort query by date (newest items first)
