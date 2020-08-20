@@ -160,7 +160,7 @@ function updateRepeater() {
 	// Loop over repeater items
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
     const YEARBOX_COLOR_LIGHT = "#FFBF3D";
-    const YEARBOX_COLOR_DARK = "#DEA633"
+    const YEARBOX_COLOR_DARK = "#DEA633";
 
     // Checking for missing fields
     try {
