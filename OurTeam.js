@@ -1,8 +1,9 @@
-// TODO: Check that end date is after start date
+/**
+ * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
+ */
 
 import wixWindow from 'wix-window';
 
-// For highlighted members without a picture
 const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png"
 
 // Indexes to differentiate similar repeaters, item IDs, and other relevant elements of the page
@@ -12,7 +13,6 @@ const MASC_STUDENTS = "MAS";
 const UNDERGRADUATES = "UND";
 const ALUMNI = "ALM";
 
-// Member types that are highlighted with image repeaters
 const HIGHLIGHTED_MEMBERS = [POST_DOCTORAL_FELLOWS, PHD_STUDENTS, MASC_STUDENTS, UNDERGRADUATES]
 
 $w.onReady(function () {
@@ -32,7 +32,6 @@ export function collapseAnchorMenuButton_click(event) {
 	} else {
 		$w("#anchorMenu").hide("float", { direction: "right" });
 	}
-
 }
 
 /**
