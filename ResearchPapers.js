@@ -159,6 +159,8 @@ function updateRepeater() {
 
 	// Loop over repeater items
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
+    const YEARBOX_COLOR_LIGHT = "#FFBF3D";
+    const YEARBOX_COLOR_DARK = "#DEA633"
 
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
 
@@ -179,23 +181,19 @@ function updateRepeater() {
 			$item("#abstractUnavailable").hide();
 		}
 
-		// Change colour of year box to make different years stand out from each other in the repeater
-		try {
-			let currentYear = itemData.publicationDate.getFullYear()
+		let currentYear = itemData.publicationDate.getFullYear()
 
-			if (index === 0) {
-				colorFlag = true; // make the first yearbox a bright yellow
-			} else if (previousItemYear !== currentYear) {
-				colorFlag = !colorFlag; // toggle color flag if the year changes between two repeater items
-			}
-
-			previousItemYear = currentYear;
-
-			let chosenColor = colorFlag ? "#FFBF3D" : "#dea633"; // choose between a bright / darker colour for the year box
-			$item("#YearBox").style.backgroundColor = chosenColor;
-		} catch (err) {
-			$item("#YearBox").style.backgroundColor = "#000000"; // Make sidebar black if error (e.g. if no date available)
+    // Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
+		if (index === 0) {
+			colorFlag = true; // Bright color for top-most repeater item
+		} else if (previousItemYear !== currentYear) {
+			colorFlag = !colorFlag; 
 		}
+
+		previousItemYear = currentYear;
+
+		let chosenColor = colorFlag ? YEARBOX_COLOR_LIGHT : YEARBOX_COLOR_DARK;
+		$item("#YearBox").style.backgroundColor = chosenColor;
 
 		// Show loading GIF and hide text results until last repeater item is loaded
 		if (index + 1 === $w(REPEATER).data.length) { // repeater index starts from 0
