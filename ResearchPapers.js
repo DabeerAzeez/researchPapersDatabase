@@ -163,6 +163,16 @@ function updateRepeater() {
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
 
 		// Show 'image unavailable' as necessary
+    // Checking for missing fields
+    try {
+      let requiredFields = {
+        title: itemData.title,
+        citation: itemData.content,
+        publicationDate: itemData.publicationDate
+      }
+    } catch (error) {
+      throw new Error("At least one required field is missing for item ID: ", itemData._id)
+    }
 		if (!itemData.abstract) {
 			$item("#abstractUnavailable").show();
 		} else {
@@ -195,15 +205,7 @@ function updateRepeater() {
 			$w("#loadingGIFTop").show()
 			$w("#textResults").hide()
 		}
-
-		// show link button and dashed line if link is available
-		if (itemData.link) {
-			$item("#linkButton").show()
-			$item("#numToButtonLine").show()
-		} else {
-			$item("#linkButton").hide()
-			$item("#numToButtonLine").hide()
-		}
+		
 	});
 }
 
