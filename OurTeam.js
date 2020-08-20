@@ -1,13 +1,9 @@
 // TODO: Check if maximum load capacities for repeaters are enough
 // TODO: Check that end date is after start date
 
-import wixData from 'wix-data';
 import wixWindow from 'wix-window';
-import wixUsers from 'wix-users';
 
-const DATABASE = "OurTeam"
 const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png"
-const CURRENTUSER = wixUsers.currentUser;
 
 // Indexes to differentiate similar repeaters, item IDs, and other relevant elements of the page
 const POST_DOCTORAL_FELLOWS = "PDF";
