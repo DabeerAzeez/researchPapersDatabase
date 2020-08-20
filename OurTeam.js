@@ -81,6 +81,12 @@ function setUpAlumniRepeater() {
 			throw new Error("Following member has more than one member type: " + itemData.name)
 		}
 
+		let startDate = new Date(itemData.startTime);
+		let endDate = new Date(itemData.endTime);
+
+		if (startDate > endDate) {
+			throw new Error("Following member has end date after start date: " + itemData.name)
+		}
 		if (memberType === "Ph.D. Student") {
 			memberType = "Ph.D"
 		}
