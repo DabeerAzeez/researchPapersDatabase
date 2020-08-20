@@ -297,11 +297,13 @@ function filterDataset(searchQuery) {
 	}
 
 	debounceTimer = setTimeout(() => {
-		// filter dataset for items with title / content fields that contain the search query
+		// Filter dataset for items with title or content fields that contain the search query, then update page elements
 		$w(DATASET).setFilter(wixData.filter().contains("title", searchQuery)
-				.or(wixData.filter().contains("content", $w("#searchBar").value)))
+				.or(wixData.filter().contains("content", searchQuery)))
 			.then(() => updateElements())
-	}, 200);
+	}, DEBOUNCE_TIME);
 
-	$w(DATASET).loadPage(1); // By default load only first page of data for any new search query
+  if ($w(DATASET).getTotalCount() > 0) {
+    $w(DATASET).loadPage(1); // Load only first page of data for any new search query
+  }
 }
