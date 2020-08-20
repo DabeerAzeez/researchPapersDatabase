@@ -63,9 +63,9 @@ $w.onReady(async function () {
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
-		$w("#mobileAlertMessage").expand();
+		await $w("#mobileAlertMessage").expand();
 	} else {
-		$w("#mobileAlertMessage").collapse();
+		await $w("#mobileAlertMessage").collapse();
 	}
 
 });
