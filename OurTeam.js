@@ -40,6 +40,15 @@ export function collapseAnchorMenuButton_click(event) {
  */
 function setUpImgRepeater(memberType) {
 	$w("#Repeater" + memberType).forEachItem(($item, itemData, index) => {
+		// Checking for missing fields
+		let requiredProperties = ["name", "alumnus", "memberType"]
+
+		requiredProperties.forEach((property) => {
+			if (!itemData.hasOwnProperty(property)) {
+				throw new Error("Item ID: " + itemData._id + " missing property: " + property)
+			}
+		});
+
 		if (itemData.memberType.length > 1) {
 			throw new Error("Following member has more than one member type: " + itemData.name)
 		}
@@ -59,8 +68,14 @@ function setUpAlumniRepeater() {
 		let startYear;
 		let endYear;
 		let memberType;
+		// Checking for missing fields
+		let requiredProperties = ["name", "alumnus", "memberType", "startTime", "endTime"]
 
-		memberType = itemData.memberType[0];
+		requiredProperties.forEach((property) => {
+			if (!itemData.hasOwnProperty(property)) {
+				throw new Error("Item ID: " + itemData._id + " missing property: " + property)
+			}
+		});
 
 		if (itemData.memberType.length > 1) {
 			throw new Error("Following member has more than one member type: " + itemData.name)
