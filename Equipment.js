@@ -51,12 +51,12 @@ async function updateEndContainer(total) {
 	let nonZeroItems = total > 0;
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
-	// Show loading button only if there are more pages of papers to load
+	// Show loading buttons only if there are more items to load
 	if (nonZeroItems && !allPagesLoaded) {
-		await $w("#loadMoreButton").expand(); 
+		await $w("#loadingButtonsContainer").expand();
 		await $w("#noLoadingButtons").collapse();
 	} else {
-		await $w("#loadMoreButton").collapse(); 
+		await $w("#loadingButtonsContainer").collapse();
 		await $w("#noLoadingButtons").expand();
 	}
 }
