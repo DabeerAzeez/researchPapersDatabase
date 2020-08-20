@@ -48,7 +48,7 @@ $w.onReady(async function () {
 			const totalDatabaseItems = items.length;
 
 			// Update each publication's publication number automatically (as necessary) based on total number of papers
-			if (currentUser.loggedIn && currentUser.role === 'Admin' || 'Owner') {
+			if (currentUser.loggedIn && currentUser.role === 'Admin') {
 				for (var i = 0; i < items.length; i++) {
 					let item = items[i];
 					let properIndex = totalDatabaseItems - i;
