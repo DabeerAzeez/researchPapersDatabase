@@ -1,3 +1,7 @@
+/**
+ * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
+ */
+
 const DATASET = "#EquipmentDS"
 const REPEATER = " #EquipmentRepeater"
 
@@ -5,6 +9,8 @@ $w.onReady(function () {
   
   // Loop over repeater items to hide show appropriate items based on availability
 	$w(REPEATER).onItemReady(async ($item, itemData, index) => {
+
+    // Show 'image coming soon' if image is unavailable
 		if (itemData.image === undefined) {
 			await $item("#imageComingSoon").expand();
 			await $item("#equipmentImage").collapse();
@@ -13,6 +19,7 @@ $w.onReady(function () {
 			await $item("#equipmentImage").expand();
 		}
 
+    // Show link button if link is available
 		if (itemData.productLink) {
 			$item("#linkButton").show();
 		} else {
@@ -22,8 +29,6 @@ $w.onReady(function () {
 });
 
 /**
- * Check to see if all data from available results is being shown and toggle loading button appropriately with an
- * alternative container
  * Manually load another page of data for the dataset and display a loading GIF as necessary
  * @param {click event} event - click event for loadMoreButton
  */
@@ -36,6 +41,10 @@ export async function loadMoreButton_click(event) {
 
 	updateEndContainer(total);
 }
+
+/**
+ * Check to see if dataset results are being shown, toggle displaying 'loading buttons' with an alternative container
+ * @param {number} total - total number of dataset items under current filter
  */
 async function updateEndContainer(total) {
 	
