@@ -7,6 +7,7 @@ import wixWindow from 'wix-window';
 import wixUsers from 'wix-users';
 
 import { checkItemProperties } from 'public/shared.js'
+import { sleep } from 'public/shared.js'
 
 const COLLECTION = "ResearchPapers"
 const DATASET = "#RPDataSet"
@@ -275,6 +276,7 @@ export async function loadAllButton_click(event) {
 	while ($w(DATASET).getCurrentPageIndex() < $w(DATASET).getTotalPageCount()) {
 		await $w(DATASET).loadMore(); // await makes repeater rows load incrementally instead of all at once
 		updateElements()
+		await sleep(1000);
 	}
 
 	$w("#loadingGIFAll").hide();
