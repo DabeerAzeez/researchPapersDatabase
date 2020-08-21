@@ -39,10 +39,10 @@ export function collapseAnchorMenuButton_click(event) {
  * Set up image repeaters, those for non-alumni, featuring a headshot above their name and no description below their name
  */
 function setUpImgRepeater(memberType) {
+	const requiredProperties = ["name", "memberType"]
+
 	$w("#Repeater" + memberType).forEachItem(($item, itemData, index) => {
-		const requiredProperties = ["name", "memberType"]
 		checkItemProperties(itemData, requiredProperties);
-		
 		if (itemData.memberType.length > 1) {
 			throw new Error("Following member has more than one member type: " + itemData.name)
 		}
@@ -57,9 +57,9 @@ function setUpImgRepeater(memberType) {
  * Set up repeater for alumni, no headshot for anyone, description is placed below their name
  */
 function setUpAlumniRepeater() {
+	const requiredProperties = ["name", "alumnus", "memberType", "startTime", "endTime"]
+
 	$w("#Repeater" + ALUMNI).forEachItem(($item, itemData, index) => {
-		// Checking for missing fields
-		const requiredProperties = ["name", "alumnus", "memberType", "startTime", "endTime"]
 		checkItemProperties(itemData, requiredProperties);
 
 		if (itemData.memberType.length > 1) {
