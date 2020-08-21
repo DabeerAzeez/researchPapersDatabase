@@ -31,7 +31,7 @@ interface ResearchPaperItem {
 
 $w.onReady(async function () {
 	let databaseChanged = false;
-	
+
 	await wixData.query(DATABASE)
 		.limit(1000)
 		.descending("publicationDate") // Sort query by date (newest items first)
@@ -61,8 +61,8 @@ $w.onReady(async function () {
 	if (databaseChanged) {
 		refreshDataset(DATASET)
 	} else {
-    updateElements();
-  }
+		updateElements();
+	}
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
@@ -109,7 +109,7 @@ function updateElements() {
 function updateTextResults(total) {
 	let currentlyDisplayed = $w(REPEATER).data.length;
 
-  // Change wording of text results based on the total number of results
+	// Change wording of text results based on the total number of results
 	if (total > 1) {
 		$w('#textResults').text = `Showing ${currentlyDisplayed} of ${total} results`;
 	} else if (total === 1) {
@@ -174,9 +174,9 @@ function updateRepeater() {
 			$item("#abstractUnavailable").show();
 		} else {
 			$item("#abstractUnavailable").hide();
-    }
-    
-    // Display link button and dashed line if link is available
+		}
+
+		// Display link button and dashed line if link is available
 		if (itemData.link) {
 			$item("#linkButton").show()
 			$item("#numToButtonLine").show()
@@ -187,11 +187,11 @@ function updateRepeater() {
 
 		let currentYear = itemData.publicationDate.getFullYear()
 
-    // Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
+		// Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
 		if (index === 0) {
 			colorFlag = true; // Bright color for top-most repeater item
 		} else if (previousItemYear !== currentYear) {
-			colorFlag = !colorFlag; 
+			colorFlag = !colorFlag;
 		}
 
 		previousItemYear = currentYear;
@@ -207,7 +207,7 @@ function updateRepeater() {
 			$w("#loadingGIFTop").show()
 			$w("#textResults").hide()
 		}
-		
+
 	});
 }
 
@@ -320,7 +320,7 @@ function filterDataset(searchQuery) {
 			.then(() => updateElements())
 	}, DEBOUNCE_TIME);
 
-  if ($w(DATASET).getTotalCount() > 0) {
-    $w(DATASET).loadPage(1); // Load only first page of data for any new search query
-  }
+	if ($w(DATASET).getTotalCount() > 0) {
+		$w(DATASET).loadPage(1); // Load only first page of data for any new search query
+	}
 }
