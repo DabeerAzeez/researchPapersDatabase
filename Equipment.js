@@ -2,13 +2,17 @@
  * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
  */
 
+import {checkItemProperties} from 'public/shared.js'
+
 const DATASET = "#EquipmentDS"
 const REPEATER = " #EquipmentRepeater"
 
 $w.onReady(function () {
+	const requiredProperties = ["title"];
 
 	// Loop over repeater items to hide show appropriate items based on availability
 	$w(REPEATER).onItemReady(async ($item, itemData, index) => {
+		checkItemProperties(itemData, requiredProperties)
 
 		// Show 'image coming soon' if image is unavailable
 		if (itemData.image === undefined) {
