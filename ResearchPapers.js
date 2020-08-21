@@ -223,7 +223,7 @@ async function updateNoItemsFound(total) {
 		$w("#noItemsFound").show()
 		await $w(REPEATER).collapse();
 	} else {
-		throw new Error("Improper usage of noItemsCheck(), cannot parse input: ", total)
+		throw new Error("Improper usage of noItemsCheck(), cannot parse input: " + total)
 	}
 
 	$w("#loadingGIFTop").hide();
