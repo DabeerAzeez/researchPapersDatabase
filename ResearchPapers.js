@@ -161,10 +161,10 @@ function updateRepeater() {
 
 	// Loop over repeater items
 	const requiredProperties = ["title", "content", "publicationDate", "publicationNumber"]
+	const YEARBOX_COLOR_LIGHT = "#FFBF3D";
+	const YEARBOX_COLOR_DARK = "#DEA633";
 	
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
-    const YEARBOX_COLOR_LIGHT = "#FFBF3D";
-    const YEARBOX_COLOR_DARK = "#DEA633";
 		checkItemProperties(itemData, requiredProperties);
 		
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // Display publication number
