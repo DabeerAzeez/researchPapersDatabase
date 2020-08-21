@@ -4,9 +4,13 @@
  * @param {array [string]} requiredProperties - array of all properties that are required
  */
 export function checkItemProperties(item, requiredProperties) {
-	requiredProperties.forEach((property) => {
-		if (!item.hasOwnProperty(property)) {
-			throw new Error("Item ID: " + item._id + " missing property: " + property)
-		}
-	});
+  if (item._id === undefined) {
+      throw new Error("Improper usage of checkItemProperties(); received an item without an ID")
+  }
+  
+requiredProperties.forEach((property) => {
+  if (!item.hasOwnProperty(property)) {
+    throw new Error("Item ID: " + item._id + " missing property: " + property)
+  }
+});
 }
