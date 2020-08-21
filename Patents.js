@@ -19,7 +19,7 @@ FOR REFERENCE, each item in the collection above has the following properties:
 
 interface ResearchPaperItem {
   title: String;
-  ID: String;
+  _id: String;
   citation: String;
   filingDate: Timestamp;
   link?: URL;

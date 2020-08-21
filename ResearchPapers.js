@@ -19,7 +19,7 @@ FOR REFERENCE, each item in the collection above has the following properties:
 
 interface ResearchPaperItem {
   title: String;
-  ID: String;
+  _id: String;
   content: String;
   abstract?: Image;
   publicationDate: Timestamp;
@@ -75,7 +75,7 @@ $w.onReady(async function () {
 });
 
 /**
- * Refreshes dataset and updates page elements afterwards.
+ * Refreshes dataset and updates page elements afterwards
  * @param {dataset} dataset - dataset to be refreshed
  */
 function refreshDataset(dataset) {
@@ -123,7 +123,7 @@ function updateTextResults(total) {
 }
 
 /**
- * Check to see if dataset results are being shown, toggle displaying 'loading buttons' with an alternative container
+ * Check to see if all dataset results are being shown, toggle displaying 'loading buttons' or alternative container
  * @param {number} total - total number of dataset items under current filter
  */
 function updateEndContainer(total) {
@@ -131,25 +131,11 @@ function updateEndContainer(total) {
 	let allPagesLoaded = $w(DATASET).getCurrentPageIndex() === $w(DATASET).getTotalPageCount();
 
 	if (nonZeroPapers && !allPagesLoaded) {
-		showLoadingButtons(true); // Show loading buttons only if there are more items to load
+		$w("#loadingButtonsContainer").show(); // Show loading buttons only if there are more items to load
+		$w("#noLoadingButtons").hide(); 
 	} else {
-		showLoadingButtons(false);
-	}
-}
-
-/**
- * Toggles between showing loading buttons and alternative container
- * @param {boolean} choice - choice whether to show loading buttons
- */
-function showLoadingButtons(choice) {
-	if (choice === true) {
-		$w("#loadingButtonsContainer").show();
-		$w("#noLoadingButtons").hide();
-	} else if (choice === false) {
 		$w("#loadingButtonsContainer").hide();
 		$w("#noLoadingButtons").show();
-	} else {
-		throw new Error("Improper usage of showLoadingButtons()")
 	}
 }
 
@@ -157,16 +143,17 @@ function showLoadingButtons(choice) {
  * Loop over repeater items to style and notate various components based on item data
  */
 function updateRepeater() {
-	let previousItemYear;
+	
+	const REQUIRED_PROPERTIES = ["title", "content", "publicationDate", "publicationNumber", "link"]
+	const YEARBOX_COLOR_LIGHT = "#FFBF3D";
+  const YEARBOX_COLOR_DARK = "#DEA633";
+  
+  let previousItemYear;
 	let colorFlag = true;
 
-	// Loop over repeater items
-	const requiredProperties = ["title", "content", "publicationDate", "publicationNumber", "link"]
-	const YEARBOX_COLOR_LIGHT = "#FFBF3D";
-	const YEARBOX_COLOR_DARK = "#DEA633";
-
+  // Loop over repeater items
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
-		checkItemProperties(itemData, requiredProperties);
+		checkItemProperties(itemData, REQUIRED_PROPERTIES); // Check if item has all appropriate properties
 
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // Display publication number
 
@@ -188,11 +175,11 @@ function updateRepeater() {
 
 		let currentYear = itemData.publicationDate.getFullYear()
 
-		// Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
+		// Toggle between bright/dark year box colors to make different years stand out
 		if (index === 0) {
-			colorFlag = true; // Bright color for top-most repeater item
+			colorFlag = true; // Bright color for first (top-most) repeater item
 		} else if (previousItemYear !== currentYear) {
-			colorFlag = !colorFlag;
+			colorFlag = !colorFlag; // Toggle color if year changes between two items
 		}
 
 		previousItemYear = currentYear;
@@ -233,25 +220,26 @@ async function updateNoItemsFound(total) {
 /* IMAGE MOUSEIN-MOUSEOUT EVENT HANDLERS */
 
 /**
- * Fade in border around the publication image on mouse in (done manually since hoverboxes not supported in repeaters)
+ * Fade in 'border' box behind the publication image on mouse in 
+ * (This method was chosen since hoverboxes are not supported inside repeaters)
  * @param {mouseIn event} event - mouseIn event for each publication image container
  */
 export function publicationImage_mouseIn(event) {
-	let $item = $w.at(event.context); // Access item where event occurred
-	$item("#imageOverlay").show("fade", { "duration": 200 });
+	let $item = $w.at(event.context); // Access item where mouseIn event occurred
+	$item("#imageBorder").show("fade", { "duration": 200 });
 }
 
 /**
- * Fade out border around the publication image on mouse out (done manually since hoverboxes not supported in repeaters)
+ * Fade out 'border' box behind the publication image on mouse in 
+ * (This method was chosen since hoverboxes are not supported inside repeaters)
  * @param {mouseIn event} event - mouseIn event for each publication image container
  */
 export function publicationImage_mouseOut(event) {
-	let $item = $w.at(event.context); // Access item where event occurred
-	$item("#imageOverlay").hide("fade", { "duration": 200 });
+	let $item = $w.at(event.context); // Access item where mouseIn event occurred
+	$item("#imageBorder").hide("fade", { "duration": 200 });
 }
 
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
-// TODO: Check if event handlers work without event parameter
 // TODO: Check what changes if updateElements(); is placed inside load all while loop
 
 /**
@@ -266,7 +254,7 @@ export async function loadMoreButton_click(event) {
 }
 
 /**
- * Load pages of data and update dynamic page elements incrementally
+ * Load all pages of data and update dynamic page elements incrementally
  * @param {click event} event - click event for loadMoreButton
  */
 export async function loadAllButton_click(event) {
