@@ -163,10 +163,10 @@ function updateRepeater() {
 	const requiredProperties = ["title", "content", "publicationDate", "publicationNumber"]
 	const YEARBOX_COLOR_LIGHT = "#FFBF3D";
 	const YEARBOX_COLOR_DARK = "#DEA633";
-	
+
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
 		checkItemProperties(itemData, requiredProperties);
-		
+
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // Display publication number
 
 		// Display 'image unavailable' as necessary
