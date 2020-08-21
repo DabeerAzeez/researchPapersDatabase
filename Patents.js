@@ -6,6 +6,8 @@ import wixData from 'wix-data';
 import wixWindow from 'wix-window';
 import wixUsers from 'wix-users';
 
+import {checkItemProperties} from 'public/shared.js'
+
 const DATABASE = "Patents"
 const DATASET = "#PatentsDS"
 const REPEATER = " #PatentsRepeater"
@@ -157,20 +159,12 @@ function updateRepeater() {
 	let colorFlag = true;
 
 	// Loop over repeater items
+	const requiredProperties = ["title", "citation", "filingDate", "publicationNumber"]
+
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
     const YEARBOX_COLOR_LIGHT = "#FFBF3D";
     const YEARBOX_COLOR_DARK = "#DEA633";
-
-    // Checking for missing fields
-    try {
-      let requiredFields = {
-        title: itemData.title,
-        citation: itemData.citation,
-        filingDate: itemData.filingDate
-      }
-    } catch (error) {
-      throw new Error("At least one required field is missing for item ID: ", itemData._id)
-    }
+		checkItemProperties(itemData, requiredProperties)
 
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
 
