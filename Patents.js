@@ -6,7 +6,7 @@ import wixData from 'wix-data';
 import wixWindow from 'wix-window';
 import wixUsers from 'wix-users';
 
-import {checkItemProperties} from 'public/shared.js'
+import { checkItemProperties } from 'public/shared.js'
 
 const DATABASE = "Patents"
 const DATASET = "#PatentsDS"
