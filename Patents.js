@@ -243,10 +243,10 @@ export async function loadAllButton_click(event) {
 
 	// Load more data until repeater has all items available
 	while ($w(DATASET).getCurrentPageIndex() < $w(DATASET).getTotalPageCount()) {
-		await $w(DATASET).loadMore(); // await makes repeater rows load incrementally instead of all at once
+    await $w(DATASET).loadMore(); // await makes repeater rows load incrementally instead of all at once
+    updateElements();
 	}
 
-	updateElements();
 	$w("#loadingGIFAll").hide();
 }
 
