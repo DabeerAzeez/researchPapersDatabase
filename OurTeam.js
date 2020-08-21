@@ -3,6 +3,7 @@
  */
 
 import wixWindow from 'wix-window';
+import {checkItemProperties} from 'public/shared.js'
 
 const BACKUPIMAGE = "https://static.wixstatic.com/media/c6776b_35c58bbf6dda4263ad8fd90b077a2592~mv2.png"
 
@@ -39,15 +40,9 @@ export function collapseAnchorMenuButton_click(event) {
  */
 function setUpImgRepeater(memberType) {
 	$w("#Repeater" + memberType).forEachItem(($item, itemData, index) => {
-		// Checking for missing fields
-		let requiredProperties = ["name", "alumnus", "memberType"]
-
-		requiredProperties.forEach((property) => {
-			if (!itemData.hasOwnProperty(property)) {
-				throw new Error("Item ID: " + itemData._id + " missing property: " + property)
-			}
-		});
-
+		const requiredProperties = ["name", "memberType"]
+		checkItemProperties(itemData, requiredProperties);
+		
 		if (itemData.memberType.length > 1) {
 			throw new Error("Following member has more than one member type: " + itemData.name)
 		}
@@ -55,7 +50,7 @@ function setUpImgRepeater(memberType) {
 		if (itemData.image === undefined) {
 			$item("#memberImage" + memberType).src = BACKUPIMAGE;
 		}
-	})
+	});
 }
 
 /**
@@ -64,13 +59,8 @@ function setUpImgRepeater(memberType) {
 function setUpAlumniRepeater() {
 	$w("#Repeater" + ALUMNI).forEachItem(($item, itemData, index) => {
 		// Checking for missing fields
-		let requiredProperties = ["name", "alumnus", "memberType", "startTime", "endTime"]
-
-		requiredProperties.forEach((property) => {
-			if (!itemData.hasOwnProperty(property)) {
-				throw new Error("Item ID: " + itemData._id + " missing property: " + property)
-			}
-		});
+		const requiredProperties = ["name", "alumnus", "memberType", "startTime", "endTime"]
+		checkItemProperties(itemData, requiredProperties);
 
 		if (itemData.memberType.length > 1) {
 			throw new Error("Following member has more than one member type: " + itemData.name)
