@@ -8,13 +8,13 @@ import wixUsers from 'wix-users';
 
 import { checkItemProperties } from 'public/shared.js'
 
-const DATABASE = "Patents"
+const COLLECTION = "Patents"
 const DATASET = "#PatentsDS"
 const REPEATER = " #PatentsRepeater"
 const CURRENTUSER = wixUsers.currentUser;
 
 /*
-FOR REFERENCE, each database item has the following properties:
+FOR REFERENCE, each item in the collection above has the following properties:
 
 interface ResearchPaperItem {
   title: String;
@@ -31,7 +31,7 @@ interface ResearchPaperItem {
 $w.onReady(async function () {
 	let databaseChanged = false;
 
-	await wixData.query(DATABASE)
+	await wixData.query(COLLECTION)
 		.limit(1000)
 		.descending("filingDate") // Sort query by date (newest items first)
 		.find()
@@ -46,7 +46,7 @@ $w.onReady(async function () {
 					let properIndex = totalDatabaseItems - i;
 					if (item.publicationNumber !== properIndex) {
 						item.publicationNumber = properIndex;
-						await wixData.update(DATABASE, item);
+						await wixData.update(COLLECTION, item);
 
 						if (databaseChanged === false) {
 							databaseChanged = true;
