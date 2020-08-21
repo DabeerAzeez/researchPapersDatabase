@@ -6,13 +6,15 @@ import wixData from 'wix-data';
 import wixWindow from 'wix-window';
 import wixUsers from 'wix-users';
 
-const DATABASE = "Patents"
+import { checkItemProperties } from 'public/shared.js'
+
+const COLLECTION = "Patents"
 const DATASET = "#PatentsDS"
 const REPEATER = " #PatentsRepeater"
 const CURRENTUSER = wixUsers.currentUser;
 
 /*
-FOR REFERENCE, each database item has the following properties:
+FOR REFERENCE, each item in the collection above has the following properties:
 
 interface ResearchPaperItem {
   title: String;
@@ -29,7 +31,7 @@ interface ResearchPaperItem {
 $w.onReady(async function () {
 	let databaseChanged = false;
 
-	await wixData.query(DATABASE)
+	await wixData.query(COLLECTION)
 		.limit(1000)
 		.descending("filingDate") // Sort query by date (newest items first)
 		.find()
@@ -44,7 +46,7 @@ $w.onReady(async function () {
 					let properIndex = totalDatabaseItems - i;
 					if (item.publicationNumber !== properIndex) {
 						item.publicationNumber = properIndex;
-						await wixData.update(DATABASE, item);
+						await wixData.update(COLLECTION, item);
 
 						if (databaseChanged === false) {
 							databaseChanged = true;
@@ -58,14 +60,14 @@ $w.onReady(async function () {
 	if (databaseChanged) {
 		refreshDataset(DATASET)
 	} else {
-    updateElements();
-  }
+		updateElements();
+	}
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
-		$w("#mobileAlertMessage").expand();
+		await $w("#mobileAlertMessage").expand();
 	} else {
-		$w("#mobileAlertMessage").collapse();
+		await $w("#mobileAlertMessage").collapse();
 	}
 
 });
@@ -106,7 +108,7 @@ function updateElements() {
 function updateTextResults(total) {
 	let currentlyDisplayed = $w(REPEATER).data.length;
 
-  // Change wording of text results based on the total number of results
+	// Change wording of text results based on the total number of results
 	if (total > 1) {
 		$w('#textResults').text = `Showing ${currentlyDisplayed} of ${total} results`;
 	} else if (total === 1) {
@@ -157,39 +159,31 @@ function updateRepeater() {
 	let colorFlag = true;
 
 	// Loop over repeater items
-	$w(REPEATER).forEachItem(($item, itemData, index) => {
-    const YEARBOX_COLOR_LIGHT = "#FFBF3D";
-    const YEARBOX_COLOR_DARK = "#DEA633";
+	const YEARBOX_COLOR_LIGHT = "#FFBF3D";
+	const YEARBOX_COLOR_DARK = "#DEA633";
+	const requiredProperties = ["title", "citation", "filingDate", "publicationNumber", "link"]
 
-    // Checking for missing fields
-    try {
-      let requiredFields = {
-        title: itemData.title,
-        citation: itemData.citation,
-        filingDate: itemData.filingDate
-      }
-    } catch (error) {
-      throw new Error("At least one required field is missing for item ID: ", itemData._id)
-    }
+	$w(REPEATER).forEachItem(($item, itemData, index) => {
+		checkItemProperties(itemData, requiredProperties)
 
 		$item("#publicationNumber").text = itemData.publicationNumber.toString(); // set publication number
 
-        // Display link button and dashed line if link is available
+		// Display link button and dashed line if link is available
 		if (itemData.link) {
 			$item("#linkButton").show()
 			$item("#numToButtonLine").show()
 		} else {
 			$item("#linkButton").hide()
 			$item("#numToButtonLine").hide()
-    }
-    
-    let currentYear = itemData.filingDate.getFullYear()
+		}
 
-    // Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
+		let currentYear = itemData.filingDate.getFullYear()
+
+		// Toggle between bright/dark year box colors to make adjacent years stand out from each other if they are different
 		if (index === 0) {
 			colorFlag = true; // Bright color for top-most repeater item
 		} else if (previousItemYear !== currentYear) {
-			colorFlag = !colorFlag; 
+			colorFlag = !colorFlag;
 		}
 
 		previousItemYear = currentYear;
@@ -205,8 +199,8 @@ function updateRepeater() {
 			$w("#loadingGIFTop").show()
 			$w("#textResults").hide()
 		}
-    
-  });
+
+	});
 }
 
 /**
@@ -296,7 +290,7 @@ function filterDataset(searchQuery) {
 			.then(() => updateElements())
 	}, DEBOUNCE_TIME);
 
-  if ($w(DATASET).getTotalCount() > 0) {
-    $w(DATASET).loadPage(1); // Load only first page of data for any new search query
-  }
+	if ($w(DATASET).getTotalCount() > 0) {
+		$w(DATASET).loadPage(1); // Load only first page of data for any new search query
+	}
 }
