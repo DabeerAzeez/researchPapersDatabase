@@ -160,7 +160,7 @@ function updateRepeater() {
 	let colorFlag = true;
 
 	// Loop over repeater items
-	const requiredProperties = ["title", "content", "publicationDate", "publicationNumber"]
+	const requiredProperties = ["title", "content", "publicationDate", "publicationNumber", "link"]
 	const YEARBOX_COLOR_LIGHT = "#FFBF3D";
 	const YEARBOX_COLOR_DARK = "#DEA633";
 
