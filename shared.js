@@ -8,9 +8,9 @@ export function checkItemProperties(item, requiredProperties) {
       throw new Error("Improper usage of checkItemProperties(); received an item without an ID")
   }
   
-requiredProperties.forEach((property) => {
-  if (!item.hasOwnProperty(property)) {
-    throw new Error("Item ID: " + item._id + " missing property: " + property)
-  }
-});
+  requiredProperties.forEach((property) => {
+    if (!item.hasOwnProperty(property)) {
+      throw new Error("Item ID: " + item._id + " missing property: " + property)
+    }
+  });
 }
