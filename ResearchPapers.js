@@ -1,7 +1,3 @@
-/**
- * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
- */
-
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
 import wixUsers from 'wix-users';
@@ -240,7 +236,6 @@ export function publicationImage_mouseOut(event) {
 }
 
 /**** 'LOAD' BUTTONS FUNCTIONALITY ****/
-// TODO: Check what changes if updateElements(); is placed inside load all while loop
 
 /**
  * Load another page of data for the dataset and update dynamic page elements

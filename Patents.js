@@ -1,7 +1,3 @@
-/**
- * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
- */
-
 import wixData from 'wix-data';
 import wixWindow from 'wix-window';
 import wixUsers from 'wix-users';
