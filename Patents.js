@@ -158,7 +158,7 @@ function updateRepeater() {
 	// Loop over repeater items
 	const YEARBOX_COLOR_LIGHT = "#FFBF3D";
 	const YEARBOX_COLOR_DARK = "#DEA633";
-	const requiredProperties = ["title", "citation", "filingDate", "publicationNumber", "link"]
+	const requiredProperties = ["title", "citation", "filingDate", "publicationNumber"]
 
 	$w(REPEATER).forEachItem(($item, itemData, index) => {
 		checkItemProperties(itemData, requiredProperties)
