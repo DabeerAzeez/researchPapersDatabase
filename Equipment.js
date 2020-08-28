@@ -1,7 +1,3 @@
-/**
- * See https://github.com/GuyInFridge/researchPapersDatabase for more documentation
- */
-
 import {checkItemProperties} from 'public/shared.js'
 
 const DATASET = "#EquipmentDS"
