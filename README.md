@@ -6,7 +6,7 @@
 
 ## Overview
 
-This project contains code for some of the subpages on the [new website](https://hoaretr.wixsite.com/hoarelab) for the Hoare Lab for Engineered Smart Materials (where I was on coop during summer 2020). This includes some interactive databases of their published research papers and citations as well as some code to improve the display of their equipment pictures and team information.
+This project contains code that was used for the development of certain subpages on the [new website](https://hoaretr.wixsite.com/hoarelab) for the Hoare Lab for Engineered Smart Materials (where I was on coop during summer 2020). This includes some Javascript for interactive databases of their publications and improved display of equipment pictures and team information as well as some Python scripts that were used to parse through files and export content appropriately to `.csv` files which could be imported directly into the Wix database collections that were used throughout the website.
 
 ### Preview of Research Papers Database
 ![](README.assets/ResearchPapers.gif)
