@@ -36,7 +36,7 @@ $w.onReady(async function () {
 			const totalDatabaseItems = items.length;
 
 			// Allow admins and owners to update publication number automatically (if necessary)
-			if (CURRENTUSER.loggedIn && CURRENTUSER.role === 'Admin' || 'Owner') {
+			if (CURRENTUSER.loggedIn && (CURRENTUSER.role === 'Admin' || 'Owner')) {
 				for (var i = 0; i < items.length; i++) {
 					let item = items[i];
 					let properIndex = totalDatabaseItems - i;
