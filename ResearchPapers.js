@@ -27,7 +27,6 @@ interface ResearchPaperItem {
 /**** ON PAGE LOAD ****/
 
 $w.onReady(async function () {
-	let databaseChanged = false;
 
 	await wixData.query(COLLECTION)
 		.limit(1000)
@@ -45,21 +44,12 @@ $w.onReady(async function () {
 					if (item.publicationNumber !== properIndex) {
 						item.publicationNumber = properIndex;
 						await wixData.update(COLLECTION, item);
-
-						if (databaseChanged === false) {
-							databaseChanged = true;
-						}
 					}
 				}
 			}
 		})
 
-	// Refresh dataset if it was changed above
-	if (databaseChanged) {
-		refreshDataset(DATASET)
-	} else {
-		updateElements();
-	}
+	refreshDataset(DATASET)
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {

@@ -26,7 +26,6 @@ interface ResearchPaperItem {
 /**** ON PAGE LOAD ****/
 
 $w.onReady(async function () {
-	let databaseChanged = false;
 
 	await wixData.query(COLLECTION)
 		.limit(1000)
@@ -53,12 +52,7 @@ $w.onReady(async function () {
 			}
 		})
 
-	// Refresh dataset if it was changed above
-	if (databaseChanged) {
-		refreshDataset(DATASET)
-	} else {
-		updateElements();
-	}
+	refreshDataset(DATASET)
 
 	// Double check that mobile alert message displays only on mobile
 	if (wixWindow.formFactor === "Mobile") {
